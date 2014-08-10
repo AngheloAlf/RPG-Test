@@ -116,6 +116,7 @@ while hacer:
 		class_selected          = '0'
 		character_selected 		= '0'
 		reproducir_musica		= False
+		enemigos_bliteados		= []
 
 		personajes_cuenta = blit_selec_pers(pantalla,user)
 		lista_id_clases = id_clases()
@@ -150,7 +151,7 @@ while hacer:
 		            #if event.key == pygame.K_s: 
 				elif event.type == pygame.MOUSEBUTTONDOWN:
 					if pygame.mouse.get_pressed()[0]==True:
-						character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY = apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta)
+						character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados = apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta)
 
 			while character_creator_menu:
 				milliseconds = clock.tick_busy_loop(FPS)
@@ -199,13 +200,13 @@ while hacer:
 							blit_pausa(pantalla) 
 							pausa = True
 						if event.key == pygame.K_UP:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,-25,datos_personaje[5],datos_mapa,datos_personaje)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,-25,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 						elif event.key == pygame.K_DOWN:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,25,datos_personaje[5],datos_mapa,datos_personaje)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,25,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 						elif event.key == pygame.K_LEFT:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,-25,datos_personaje[5],datos_mapa,datos_personaje)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,-25,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 						elif event.key == pygame.K_RIGHT:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,25,datos_personaje[5],datos_mapa,datos_personaje)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,25,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 						
 						elif event.key == pygame.K_p: ## DEBUG
 							#blit_cargando(pantalla)

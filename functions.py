@@ -79,6 +79,7 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 	posicionY 				= None
 	mouseposX				= 0
 	mouseposY				= 0
+	enemigos_bliteados 		= []
 
 	if aspect_ratio == '2':
 		mouseposX = 133
@@ -135,8 +136,9 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 			datos_mapa = blit_mapa(pantalla,datos_personaje[5])
 			blit_laterales_mapas(pantalla,datos_mapa)
 			blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
+			enemigos_bliteados = blit_monster(pantalla,datos_mapa)
 			posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],datos_personaje[6])
-	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY
+	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados
 
 def id_clases():
 	lista_clases = []
@@ -506,13 +508,13 @@ def blit_personaje_en_mapa(pantalla,clase,celda):
 def apretar_mouse_juego_loop(mouspos):
 	return
 
-def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje):
+def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje,enemigos_bliteados):
 	if aspect_ratio == '2':
 		if posx+direX<143 or posy+direY<-35 or posx+direX>893 or posy+direY>365:
-			return posx,posy,datos_personaje,datos_mapa
+			return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados
 	else:
 		if posx+direX<10 or posy+direY<-35 or posx+direX>760 or posy+direY>365:
-			return posx,posy,datos_personaje,datos_mapa
+			return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados
 
 	celdas_bloquedas = []
 	for celdas_mapa in datos_mapa:
@@ -521,7 +523,7 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 
 	celda_number,problemas = get_celda_number(posx+direX,posy+direY)
 	if celda_number in celdas_bloquedas:
-		return posx,posy,datos_personaje,datos_mapa
+		return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados
 
 	if debug_mode:
 	 	print 'celda:',celda_number
@@ -534,10 +536,11 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 	blitear_datos_mapa(pantalla,mapa,datos_mapa)
 	posx += direX
 	posy += direY
+	reblit_monster(pantalla,enemigos_bliteados)
 	pantalla.blit(personajerl,(posx,posy))
 	pygame.display.flip()
-	datos_personaje,datos_mapa,posx,posy = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje)
-	return posx,posy,datos_personaje,datos_mapa
+	datos_personaje,datos_mapa,posx,posy,enemigos_bliteados = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,enemigos_bliteados)
+	return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados
 
 def bliteo_pop_up(pantalla):
 	screenX = 0
@@ -594,7 +597,6 @@ def blitear_datos_mapa(pantalla,mapa,datos_mapa):
 			estrella.set_colorkey((255,255,255))
 			pantalla.blit(estrella,(posx,posy))
 
-		
 		if debug_mode:
 			## blitear reestricciones de movimiento	
 			if celdas=='265':
@@ -627,11 +629,11 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 	if aspect_ratio == '2':
 		mouseposX = 133
 	if (285+mouseposX<mouspos[0]<513+mouseposX) and (121+mouseposY<mouspos[1]<163+mouseposY): #reanudar
-		posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje)							
+		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (168+mouseposY<mouspos[1]<210+mouseposY): #guardar datos
 		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
-		posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje)							
+		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (213+mouseposY<mouspos[1]<255+mouseposY): #opciones
 		pass
@@ -669,16 +671,17 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 				elif (441+mouseposX<mouspos[0]<580+mouseposX)and (209+mouseposY<mouspos[1]<320+mouseposY):
 					cerrar = False
 					pausa  = False
-					posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje)
+					posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 					return character_selector_menu,juego_loop,cerrar,pausa
 		elif event.type == pygame.KEYDOWN: ##apretar boton
 			if event.key == pygame.K_ESCAPE: 
 				cerrar = False
-				posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje)
+				posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 				return character_selector_menu,juego_loop,cerrar,pausa
 	return character_selector_menu,juego_loop,cerrar,pausa
 
-def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje):
+def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigos_bliteados):
+	print datos_mapa
 	for celdas in datos_mapa:
 		if celdas<='264':
 			posx,posy = get_celdas_pos(celdas)
@@ -694,9 +697,13 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje):
 				datos_mapa          = blit_mapa(pantalla,datos_personaje[5])
 				blit_laterales_mapas(pantalla,datos_mapa)
 				blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
+				if '280' in datos_mapa:
+					enemigos_bliteados = blit_monster(pantalla,datos_mapa)
+				else:
+					enemigos_bliteados = []
 				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],nueva_celda)
-				return datos_personaje,datos_mapa,posicionX,posicionY
-	return datos_personaje,datos_mapa,posicionX,posicionY
+				return datos_personaje,datos_mapa,posicionX,posicionY,enemigos_bliteados
+	return datos_personaje,datos_mapa,posicionX,posicionY,enemigos_bliteados
 
 def blit_cargando(pantalla): #terminar
 	screenX = 25
@@ -709,6 +716,37 @@ def blit_cargando(pantalla): #terminar
 	pygame.display.flip()
 	return
 
-def blit_monster(pantalla):
-	celda_enemigo = random.randint(0,263)
+def blit_monster(pantalla,datos_mapa):
+	enemigos_bliteados = []
+	celdas_bloquedas   = []
+	if '265' in datos_mapa:
+		celdas_bloquedas = datos_mapa['265'].strip().split(';')
+	print 'blit monster'
+	lista_enemigos = datos_mapa['280'].strip().split(';')
+	for id_enemigo in lista_enemigos:
+		celda_enemigo = str(random.randint(0,263))
+		while celda_enemigo in celdas_bloquedas:
+			celda_enemigo = str(random.randint(0,263))
+		posx,posy = get_celdas_pos(celda_enemigo)
+		if aspect_ratio == '2':
+			posx += 133
+		enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
+		enemigo.set_colorkey((255,255,255))
+		pantalla.blit(enemigo,(posx,posy))
+		enemigos_bliteados.append((celda_enemigo,id_enemigo))
+		celdas_bloquedas.append(celda_enemigo)
+		print 'Monster bliteado'
+	return enemigos_bliteados
+
+def reblit_monster(pantalla,enemigos_bliteados):
+	for celda_enemigo,id_enemigo in enemigos_bliteados:
+		posx,posy = get_celdas_pos(celda_enemigo)
+		if aspect_ratio == '2':
+			posx += 133
+		enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
+		enemigo.set_colorkey((255,255,255))
+		pantalla.blit(enemigo,(posx,posy))
+	return
+
+def mover_monster(pantalla,enemigos_bliteados):
 	return
