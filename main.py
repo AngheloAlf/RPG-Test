@@ -3,6 +3,7 @@ import pygame, sys, os, random, math, time
 from pygame.locals import *
 from functions import *
 from functions_log_in import *
+from functions_settings import *
 
 cosas_hacer = ('0','1','2')
 
@@ -11,6 +12,12 @@ sesion 		 = False
 crear_cuenta = False
 oli          = False
 Titulo		 = 'RPG Test'
+FPS 		 = get_settings_FPS()
+aspect_ratio = get_settings_aspect_ratio()
+debug_mode   = get_settings_debug_mode()
+
+if debug_mode:
+	print 'Debug mode activo'
 
 print 'Bienvenido\n'
 
@@ -86,14 +93,7 @@ while hacer:
 	if oli:
 		oli 					= False
 		pygame.init()
-		settings     			= abrir_settings()
-		FPS 		 			= float(settings['FPS'])
-		aspect_ratio			= settings['aspect_ratio']
-		debug_mode 				= settings['debug_mode']
-		if debug_mode == 'True':
-			debug_mode = True
-		else:
-			debug_mode = False
+		
 		if aspect_ratio == '2':
 			pantalla			= pygame.display.set_mode((1066,600))
 		else:
@@ -111,7 +111,7 @@ while hacer:
 		
 		fuente			        = pygame.font.Font("media/PressStart2P.ttf", 15)
 
-		personajes_cuenta = blit_selec_pers(pantalla,user,aspect_ratio,fuente)
+		personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
 		lista_id_clases = id_clases()
 
 		print 'Sesion iniciada con exito'
@@ -160,7 +160,7 @@ while hacer:
 					elif event.type == pygame.KEYDOWN: ##apretar boton
 						if event.key == pygame.K_ESCAPE: 
 							character_creator_menu = False
-							personajes_cuenta = blit_selec_pers(pantalla,user,aspect_ratio,fuente)
+							personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
 							#continue
 
 					elif event.type == pygame.MOUSEBUTTONDOWN:

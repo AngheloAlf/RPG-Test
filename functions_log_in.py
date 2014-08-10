@@ -53,4 +53,3 @@ def lista_personajes_cuenta(user):
 			break
 	file_users.close()
 	return personajes
-

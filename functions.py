@@ -1,8 +1,12 @@
 import pygame, sys, os, random, math, time
 from pygame.locals import *
 from functions_log_in import lista_personajes_cuenta
+from functions_settings import *
 
-def blit_selec_pers(pantalla,user,aspect_ratio,fuente):
+aspect_ratio			= get_settings_aspect_ratio()
+debug_mode 				= get_settings_debug_mode()
+
+def blit_selec_pers(pantalla,user,fuente):
 	seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png")).convert()
 	lista    		= []
 	screenX 		= 0
@@ -197,7 +201,7 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,cl
 
 	if (5+mouseposX<mouspos[0]<103+mouseposX)and (5+mouseposY<mouspos[1]<49+mouseposY):
 		character_creator_menu = False
-		personajes_cuenta = blit_selec_pers(pantalla,user,aspect_ratio,fuente)
+		personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
 
 	if (646+mouseposX<mouspos[0]<794+mouseposX)and (5+mouseposY<mouspos[1]<41+mouseposY):
 		character_selector_menu = False
@@ -275,7 +279,7 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,cl
 			pygame.display.flip()
 			crear_personaje(user,class_selected)
 			character_creator_menu = False
-			personajes_cuenta = blit_selec_pers(pantalla,user,aspect_ratio,fuente)
+			personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
 		else:
 			print 'No tienes ranuras libres'
 
@@ -632,7 +636,7 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 		pass
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (258+mouseposY<mouspos[1]<292+mouseposY): #cambiar de personajes
 		guardar_datos_personaje(datos_personaje,posicionX,posicionY,aspect_ratio)
-		personajes_cuenta = blit_selec_pers(pantalla,user,aspect_ratio,fuente)
+		personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
 		juego_loop 				= False
 		pausa 					= False 
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (298+mouseposY<mouspos[1]<336+mouseposY): #salir
@@ -644,20 +648,6 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 		pygame.display.flip()
 
 	return posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu
-
-def abrir_settings():
-	settings      = dict()
-	file_settings = open('settings.ini')
-	for linea in file_settings:
-		valor = linea.strip().split(' = ')
-		if valor[0]=='#':
-			continue
-		try:
-			settings[valor[0]] = valor[1]
-		except:
-			continue
-	file_settings.close()
-	return settings
 
 def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa,aspect_ratio,debug_mode):
 	mouseposX = 0
@@ -716,4 +706,8 @@ def blit_cargando(pantalla,aspect_ratio): #terminar
 	loading.set_colorkey((255,255,255))
 	pantalla.blit(loading,(screenX,screenY))
 	pygame.display.flip()
+	return
+
+def blit_monster(pantalla,aspect_ratio,debug_mode):
+	celda_enemigo = random.randint(0,263)
 	return
