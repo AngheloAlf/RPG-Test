@@ -4,6 +4,7 @@ from pygame.locals import *
 from functions import *
 from functions_log_in import *
 from functions_settings import *
+from constants import *
 
 cosas_hacer = ('0','1','2')
 
@@ -18,6 +19,13 @@ debug_mode   = get_settings_debug_mode()
 
 if debug_mode:
 	print 'Debug mode activo'
+	print 'FPS:',FPS
+	if aspect_ratio=='2':
+		print 'Aspect ratio: 16:9'
+	else:
+		print 'Aspect ratio: 4:3'
+	print ''
+	Titulo = '[DEBUG] | RPG Test'
 
 print 'Bienvenido\n'
 
@@ -108,10 +116,8 @@ while hacer:
 		class_selected          = '0'
 		character_selected 		= '0'
 		reproducir_musica		= False
-		
-		fuente			        = pygame.font.Font("media/PressStart2P.ttf", 15)
 
-		personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
+		personajes_cuenta = blit_selec_pers(pantalla,user)
 		lista_id_clases = id_clases()
 
 		print 'Sesion iniciada con exito'
@@ -144,7 +150,7 @@ while hacer:
 		            #if event.key == pygame.K_s: 
 				elif event.type == pygame.MOUSEBUTTONDOWN:
 					if pygame.mouse.get_pressed()[0]==True:
-						character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY = apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta,aspect_ratio,debug_mode)
+						character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY = apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta)
 
 			while character_creator_menu:
 				milliseconds = clock.tick_busy_loop(FPS)
@@ -160,12 +166,12 @@ while hacer:
 					elif event.type == pygame.KEYDOWN: ##apretar boton
 						if event.key == pygame.K_ESCAPE: 
 							character_creator_menu = False
-							personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
+							personajes_cuenta = blit_selec_pers(pantalla,user)
 							#continue
 
 					elif event.type == pygame.MOUSEBUTTONDOWN:
 						if pygame.mouse.get_pressed()[0]==True:
-							personajes_cuenta,class_selected,character_creator_menu,character_selector_menu = apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,class_selected,lista_id_clases,personajes_cuenta)
+							personajes_cuenta,class_selected,character_creator_menu,character_selector_menu = apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_id_clases,personajes_cuenta)
 							
 				pygame.display.flip()
 
@@ -176,30 +182,30 @@ while hacer:
 				mouspos = pygame.mouse.get_pos()
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
-						bliteo_pop_up(pantalla,aspect_ratio)
+						bliteo_pop_up(pantalla)
 						cerrar = True
 						while cerrar:
 							milliseconds = clock.tick_busy_loop(FPS)
 							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 							mouspos = pygame.mouse.get_pos()
-							character_selector_menu,juego_loop,cerrar,pausa = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa,aspect_ratio,debug_mode)
+							character_selector_menu,juego_loop,cerrar,pausa = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa)
 							pygame.display.flip()
 							
 					elif event.type == pygame.MOUSEBUTTONDOWN:
 						if pygame.mouse.get_pressed()[0]==True:
-							apretar_mouse_juego_loop(mouspos,aspect_ratio)
+							apretar_mouse_juego_loop(mouspos)
 					elif event.type == pygame.KEYDOWN: ##apretar boton
 						if event.key == pygame.K_ESCAPE:
-							blit_pausa(pantalla,aspect_ratio) 
+							blit_pausa(pantalla) 
 							pausa = True
 						if event.key == pygame.K_UP:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,-25,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,-25,datos_personaje[5],datos_mapa,datos_personaje)
 						elif event.key == pygame.K_DOWN:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,25,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,25,datos_personaje[5],datos_mapa,datos_personaje)
 						elif event.key == pygame.K_LEFT:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,-25,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,-25,-25,datos_personaje[5],datos_mapa,datos_personaje)
 						elif event.key == pygame.K_RIGHT:
-							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,25,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+							posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,25,datos_personaje[5],datos_mapa,datos_personaje)
 						
 						elif event.key == pygame.K_p: ## DEBUG
 							#blit_cargando(pantalla)
@@ -219,18 +225,18 @@ while hacer:
 					mouspos = pygame.mouse.get_pos()
 					for event in pygame.event.get():
 						if event.type == pygame.QUIT:
-							bliteo_pop_up(pantalla,aspect_ratio)
+							bliteo_pop_up(pantalla)
 							cerrar = True
 							while cerrar:
 								milliseconds = clock.tick_busy_loop(FPS)
 								pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 								mouspos = pygame.mouse.get_pos()
-								character_selector_menu,juego_loop,cerrar,pausa = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,character_selector_menu,juego_loop,cerrar,pausa,debug_mode)
+								character_selector_menu,juego_loop,cerrar,pausa = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,character_selector_menu,juego_loop,cerrar,pausa)
 								pygame.display.flip()
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							if pygame.mouse.get_pressed()[0]==True:
 
-								posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu = apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,datos_mapa,aspect_ratio,user,fuente,personajes_cuenta,debug_mode)
+								posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu = apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,datos_mapa,user,personajes_cuenta)
 
 					pygame.display.flip()
 

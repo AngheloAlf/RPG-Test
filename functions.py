@@ -2,11 +2,12 @@ import pygame, sys, os, random, math, time
 from pygame.locals import *
 from functions_log_in import lista_personajes_cuenta
 from functions_settings import *
+from constants import *
 
 aspect_ratio			= get_settings_aspect_ratio()
 debug_mode 				= get_settings_debug_mode()
 
-def blit_selec_pers(pantalla,user,fuente):
+def blit_selec_pers(pantalla,user):
 	seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png")).convert()
 	lista    		= []
 	screenX 		= 0
@@ -68,7 +69,7 @@ def blit_selec_pers(pantalla,user,fuente):
 
 	return personajes_cuenta
 
-def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta,aspect_ratio,debug_mode):
+def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta):
 	character_selector_menu = True
 	character_creator_menu  = False
 	datos_personaje 		= None
@@ -88,8 +89,8 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 	if (45+mouseposX<mouspos[0]<256+mouseposX)and (506+mouseposY<mouspos[1]<560+mouseposY):
 		if '0' in personajes_cuenta:
 			character_creator_menu = True
-			blit_creac_pers(pantalla,aspect_ratio)
-			blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+			blit_creac_pers(pantalla)
+			blit_perso_selec_creacion(class_selected,pantalla)
 		else:
 			print 'Tienes todas las ranuras ocupadas'
 
@@ -130,11 +131,11 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 		else:								#pass
 			datos_personaje = datos_personaje_seleccionado(character_selected)
 			juego_loop = True
-			blit_hud_juego(pantalla,aspect_ratio)
-			datos_mapa = blit_mapa(pantalla,datos_personaje[5],aspect_ratio)
-			blit_laterales_mapas(pantalla,datos_mapa,aspect_ratio)
-			blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa,aspect_ratio,debug_mode)
-			posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],datos_personaje[6],aspect_ratio)
+			blit_hud_juego(pantalla)
+			datos_mapa = blit_mapa(pantalla,datos_personaje[5])
+			blit_laterales_mapas(pantalla,datos_mapa)
+			blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
+			posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],datos_personaje[6])
 	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY
 
 def id_clases():
@@ -148,7 +149,7 @@ def id_clases():
 	arch_clases.close()
 	return lista_clases
 
-def blit_creac_pers(pantalla,aspect_ratio):
+def blit_creac_pers(pantalla):
 	screenX  = 0
 	screenY  = 0
 	posx     = 36
@@ -177,17 +178,17 @@ def blit_creac_pers(pantalla,aspect_ratio):
 			posy = 317
 	return
 
-def blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio):
+def blit_perso_selec_creacion(class_selected,pantalla):
 	screenX = 303
 	screenY = 197
 	if aspect_ratio == '2':
 		screenX = 436
-	blit_creac_pers(pantalla,aspect_ratio)
+	blit_creac_pers(pantalla)
 	character_class = pygame.image.load(os.path.join("media","menu","class_"+class_selected+"_creation.png")).convert()
 	pantalla.blit(character_class,(screenX,screenY))
 	return
 
-def apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,class_selected,lista_id_clases,personajes_cuenta):
+def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_id_clases,personajes_cuenta):
 	character_selector_menu = True
 	character_creator_menu  = True
 	mouseposX				= 0
@@ -201,7 +202,7 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,cl
 
 	if (5+mouseposX<mouspos[0]<103+mouseposX)and (5+mouseposY<mouspos[1]<49+mouseposY):
 		character_creator_menu = False
-		personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
+		personajes_cuenta = blit_selec_pers(pantalla,user)
 
 	if (646+mouseposX<mouspos[0]<794+mouseposX)and (5+mouseposY<mouspos[1]<41+mouseposY):
 		character_selector_menu = False
@@ -212,62 +213,62 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,cl
 		if lista_id_clases[0]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[0]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[1]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[1]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[2]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[2]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[3]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[3]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[4]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[4]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[5]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[5]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[6]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[6]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[7]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[7]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[8]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[8]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[9]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[9]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[10]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[10]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[11]=='0':
 			print 'Todavia no existe esta clase'
 		class_selected = lista_id_clases[11]
-		blit_perso_selec_creacion(class_selected,pantalla,aspect_ratio)
+		blit_perso_selec_creacion(class_selected,pantalla)
 
 	elif (703+mouseposX<mouspos[0]<794+mouseposX)and (556+mouseposY<mouspos[1]<594+mouseposY):
 		if class_selected == '0':
@@ -279,7 +280,7 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,aspect_ratio,fuente,cl
 			pygame.display.flip()
 			crear_personaje(user,class_selected)
 			character_creator_menu = False
-			personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
+			personajes_cuenta = blit_selec_pers(pantalla,user)
 		else:
 			print 'No tienes ranuras libres'
 
@@ -356,7 +357,7 @@ def crear_personaje(user,class_selected):
 	escribir_file_accounts.close()
 	return
 
-def blit_hud_juego(pantalla,aspect_ratio):
+def blit_hud_juego(pantalla):
 	screenX = 0
 	screenY = 0
 	if aspect_ratio == '2':
@@ -365,7 +366,7 @@ def blit_hud_juego(pantalla,aspect_ratio):
 	pantalla.blit(pre_def_hud,(screenX,screenY))
 	return
 
-def blit_laterales_mapas(pantalla,datos_mapa,aspect_ratio):
+def blit_laterales_mapas(pantalla,datos_mapa):
 	cuadricula = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
 	cuadricula.set_colorkey((255,255,255))
 	if aspect_ratio == '2':
@@ -400,7 +401,7 @@ def blit_laterales_mapas(pantalla,datos_mapa,aspect_ratio):
 		
 	return
 
-def blit_mapa(pantalla,mapa,aspect_ratio):
+def blit_mapa(pantalla,mapa):
 	try:
 		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa"+mapa+".png")).convert()
 	except:
@@ -459,7 +460,7 @@ def get_celdas_pos(celda):
 				continue
 	return posx,posy
 
-def get_celda_number(posx,posy,aspect_ratio):
+def get_celda_number(posx,posy):
 	posicion_X   = 10
 	posicion_Y   = 0
 	posy         += 35
@@ -493,7 +494,7 @@ def get_celda_number(posx,posy,aspect_ratio):
 
 	return celda_number,problemas
 
-def blit_personaje_en_mapa(pantalla,clase,celda,aspect_ratio):
+def blit_personaje_en_mapa(pantalla,clase,celda):
 	personajerl = pygame.image.load(os.path.join("media","clases","class_"+clase+".png")).convert()
 	personajerl.set_colorkey((255,255,255))
 	posx,posy = get_celdas_pos(celda)
@@ -502,10 +503,10 @@ def blit_personaje_en_mapa(pantalla,clase,celda,aspect_ratio):
 	pantalla.blit(personajerl,(posx,posy))
 	return posx,posy
 
-def apretar_mouse_juego_loop(mouspos,aspect_ratio):
+def apretar_mouse_juego_loop(mouspos):
 	return
 
-def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje,aspect_ratio,debug_mode):
+def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje):
 	if aspect_ratio == '2':
 		if posx+direX<143 or posy+direY<-35 or posx+direX>893 or posy+direY>365:
 			return posx,posy,datos_personaje,datos_mapa
@@ -518,7 +519,7 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 	 	if celdas_mapa=='265':
 	 		celdas_bloquedas = datos_mapa[celdas_mapa].strip().split(';')
 
-	celda_number,problemas = get_celda_number(posx+direX,posy+direY,aspect_ratio)
+	celda_number,problemas = get_celda_number(posx+direX,posy+direY)
 	if celda_number in celdas_bloquedas:
 		return posx,posy,datos_personaje,datos_mapa
 
@@ -529,16 +530,16 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 	personajerl.set_colorkey((255,255,255))
 	#subpantalla = pantalla.subsurface(posx,posy,30,60)
 	#pantalla.blit(subpantalla,(posx,posy))
-	blit_mapa(pantalla,mapa,aspect_ratio)
-	blitear_datos_mapa(pantalla,mapa,datos_mapa,aspect_ratio,debug_mode)
+	blit_mapa(pantalla,mapa)
+	blitear_datos_mapa(pantalla,mapa,datos_mapa)
 	posx += direX
 	posy += direY
 	pantalla.blit(personajerl,(posx,posy))
 	pygame.display.flip()
-	datos_personaje,datos_mapa,posx,posy = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+	datos_personaje,datos_mapa,posx,posy = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje)
 	return posx,posy,datos_personaje,datos_mapa
 
-def bliteo_pop_up(pantalla,aspect_ratio):
+def bliteo_pop_up(pantalla):
 	screenX = 0
 	screenY = 0
 	if aspect_ratio == '2':
@@ -548,10 +549,10 @@ def bliteo_pop_up(pantalla,aspect_ratio):
 	pantalla.blit(pop_up,(screenX,screenY))
 	return
 
-def guardar_datos_personaje(datos_personaje,posx,posy,aspect_ratio):
+def guardar_datos_personaje(datos_personaje,posx,posy):
 	print 'Guardando datos'
 
-	datos_personaje[6],problemas = get_celda_number(posx,posy,aspect_ratio)
+	datos_personaje[6],problemas = get_celda_number(posx,posy)
 	datos_personaje[6] = str(datos_personaje[6])
 	lista = []
 
@@ -583,7 +584,7 @@ def guardar_datos_personaje(datos_personaje,posx,posy,aspect_ratio):
 		print 'Datos guardados con exito'
 	return
 
-def blitear_datos_mapa(pantalla,mapa,datos_mapa,aspect_ratio,debug_mode):
+def blitear_datos_mapa(pantalla,mapa,datos_mapa):
 	for celdas in datos_mapa:
 		if celdas<='264':
 			posx,posy = get_celdas_pos(celdas)
@@ -607,7 +608,7 @@ def blitear_datos_mapa(pantalla,mapa,datos_mapa,aspect_ratio,debug_mode):
 					pantalla.blit(bloqued,(posx,posy))
 	return
 
-def blit_pausa(pantalla,aspect_ratio):
+def blit_pausa(pantalla):
 	screenX = 0
 	screenY = 0
 	if aspect_ratio == '2':
@@ -617,7 +618,7 @@ def blit_pausa(pantalla,aspect_ratio):
 	pantalla.blit(pausa,(screenX,screenY))
 	return
 
-def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,aspect_ratio,user,fuente,personajes_cuenta,debug_mode):
+def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta):
 	pausa 	   				= True
 	juego_loop 				= True
 	character_selector_menu = True
@@ -626,22 +627,22 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 	if aspect_ratio == '2':
 		mouseposX = 133
 	if (285+mouseposX<mouspos[0]<513+mouseposX) and (121+mouseposY<mouspos[1]<163+mouseposY): #reanudar
-		posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)							
+		posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (168+mouseposY<mouspos[1]<210+mouseposY): #guardar datos
-		guardar_datos_personaje(datos_personaje,posicionX,posicionY,aspect_ratio)
-		posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)							
+		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
+		posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (213+mouseposY<mouspos[1]<255+mouseposY): #opciones
 		pass
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (258+mouseposY<mouspos[1]<292+mouseposY): #cambiar de personajes
-		guardar_datos_personaje(datos_personaje,posicionX,posicionY,aspect_ratio)
-		personajes_cuenta = blit_selec_pers(pantalla,user,fuente)
+		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
+		personajes_cuenta = blit_selec_pers(pantalla,user)
 		juego_loop 				= False
 		pausa 					= False 
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (298+mouseposY<mouspos[1]<336+mouseposY): #salir
 		print 'Cerrando sesion'
-		guardar_datos_personaje(datos_personaje,posicionX,posicionY,aspect_ratio)
+		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
 		character_selector_menu = False
 		juego_loop 				= False
 		pausa 					= False 
@@ -649,7 +650,7 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 
 	return posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu
 
-def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa,aspect_ratio,debug_mode):
+def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa):
 	mouseposX = 0
 	mouseposY = 0
 	if aspect_ratio == '2':
@@ -659,7 +660,7 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 			if mouse_apretado[0]==True:
 				if (220+mouseposX<mouspos[0]<343+mouseposX)and (210+mouseposY<mouspos[1]<320+mouseposY):
 					print 'Cerrando sesion'
-					guardar_datos_personaje(datos_personaje,posx,posy,aspect_ratio)
+					guardar_datos_personaje(datos_personaje,posx,posy)
 					character_selector_menu = False
 					juego_loop 				= False
 					cerrar 					= False
@@ -668,16 +669,16 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 				elif (441+mouseposX<mouspos[0]<580+mouseposX)and (209+mouseposY<mouspos[1]<320+mouseposY):
 					cerrar = False
 					pausa  = False
-					posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+					posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje)
 					return character_selector_menu,juego_loop,cerrar,pausa
 		elif event.type == pygame.KEYDOWN: ##apretar boton
 			if event.key == pygame.K_ESCAPE: 
 				cerrar = False
-				posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,aspect_ratio,debug_mode)
+				posicionX,posicionY,datos_personaje,datos_mapa = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje)
 				return character_selector_menu,juego_loop,cerrar,pausa
 	return character_selector_menu,juego_loop,cerrar,pausa
 
-def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,aspect_ratio,debug_mode):
+def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje):
 	for celdas in datos_mapa:
 		if celdas<='264':
 			posx,posy = get_celdas_pos(celdas)
@@ -690,14 +691,14 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,aspect_
 				datos_celda			= datos_mapa[celdas].split(';')
 				nueva_celda         = datos_celda[1]
 				datos_personaje[5]  = datos_celda[0]
-				datos_mapa          = blit_mapa(pantalla,datos_personaje[5],aspect_ratio)
-				blit_laterales_mapas(pantalla,datos_mapa,aspect_ratio)
-				blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa,aspect_ratio,debug_mode)
-				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],nueva_celda,aspect_ratio)
+				datos_mapa          = blit_mapa(pantalla,datos_personaje[5])
+				blit_laterales_mapas(pantalla,datos_mapa)
+				blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
+				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],nueva_celda)
 				return datos_personaje,datos_mapa,posicionX,posicionY
 	return datos_personaje,datos_mapa,posicionX,posicionY
 
-def blit_cargando(pantalla,aspect_ratio): #terminar
+def blit_cargando(pantalla): #terminar
 	screenX = 25
 	screenY = 25
 	if aspect_ratio == '2':
@@ -708,6 +709,6 @@ def blit_cargando(pantalla,aspect_ratio): #terminar
 	pygame.display.flip()
 	return
 
-def blit_monster(pantalla,aspect_ratio,debug_mode):
+def blit_monster(pantalla):
 	celda_enemigo = random.randint(0,263)
 	return
