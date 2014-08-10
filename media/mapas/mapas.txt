@@ -1,0 +1,9 @@
+si celda_del_mapa <= 264:
+celda_del_mapa = mapa_al_que_lleva;celda_mapa_nuevo
+
+si celda del mapa > 264:
+265 = celdas_bloqueadas
+270 = mapa_lateral_izquierda
+271 = mapa_lateral_derecha
+272 = mapa_diagonal_izquierda
+273 = mapa_diagonal_derecha
