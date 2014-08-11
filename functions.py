@@ -136,8 +136,9 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 			datos_mapa = blit_mapa(pantalla,datos_personaje[5])
 			blit_laterales_mapas(pantalla,datos_mapa)
 			blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
-			enemigos_bliteados = blit_monster(pantalla,datos_mapa)
 			posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],datos_personaje[6])
+			if '280' in datos_mapa:
+				enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY)
 	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados
 
 def id_clases():
@@ -620,7 +621,7 @@ def blit_pausa(pantalla):
 	pantalla.blit(pausa,(screenX,screenY))
 	return
 
-def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta):
+def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta,enemigos_bliteados):
 	pausa 	   				= True
 	juego_loop 				= True
 	character_selector_menu = True
@@ -652,7 +653,11 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 
 	return posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu
 
-def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa):
+def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados):
+	character_selector_menu = True
+	juego_loop 				= True
+	cerrar 					= True
+
 	mouseposX = 0
 	mouseposY = 0
 	if aspect_ratio == '2':
@@ -667,21 +672,21 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 					juego_loop 				= False
 					cerrar 					= False
 					pausa 					= False
-					return character_selector_menu,juego_loop,cerrar,pausa
+					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
 				elif (441+mouseposX<mouspos[0]<580+mouseposX)and (209+mouseposY<mouspos[1]<320+mouseposY):
 					cerrar = False
 					pausa  = False
 					posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
-					return character_selector_menu,juego_loop,cerrar,pausa
+					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
 		elif event.type == pygame.KEYDOWN: ##apretar boton
 			if event.key == pygame.K_ESCAPE: 
 				cerrar = False
 				posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
-				return character_selector_menu,juego_loop,cerrar,pausa
-	return character_selector_menu,juego_loop,cerrar,pausa
+				return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
+	return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
 
 def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigos_bliteados):
-	print datos_mapa
+	#print datos_mapa
 	for celdas in datos_mapa:
 		if celdas<='264':
 			posx,posy = get_celdas_pos(celdas)
@@ -694,14 +699,16 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				datos_celda			= datos_mapa[celdas].split(';')
 				nueva_celda         = datos_celda[1]
 				datos_personaje[5]  = datos_celda[0]
+				if debug_mode:
+					print 'Mapa:',datos_personaje[5]
 				datos_mapa          = blit_mapa(pantalla,datos_personaje[5])
 				blit_laterales_mapas(pantalla,datos_mapa)
 				blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
+				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],nueva_celda)
 				if '280' in datos_mapa:
-					enemigos_bliteados = blit_monster(pantalla,datos_mapa)
+					enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY)
 				else:
 					enemigos_bliteados = []
-				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],nueva_celda)
 				return datos_personaje,datos_mapa,posicionX,posicionY,enemigos_bliteados
 	return datos_personaje,datos_mapa,posicionX,posicionY,enemigos_bliteados
 
@@ -716,26 +723,42 @@ def blit_cargando(pantalla): #terminar
 	pygame.display.flip()
 	return
 
-def blit_monster(pantalla,datos_mapa):
+def blit_monster(pantalla,datos_mapa,posicionX,posicionY):
 	enemigos_bliteados = []
 	celdas_bloquedas   = []
+	celda_jugador = get_celda_number(posicionX,posicionY)[0]
 	if '265' in datos_mapa:
 		celdas_bloquedas = datos_mapa['265'].strip().split(';')
-	print 'blit monster'
+	for celdas_caminables in range(264):
+		if celdas_caminables not in map(int,datos_mapa.keys()):
+			continue
+		celdas_caminables = str(celdas_caminables)
+		if celdas_caminables not in datos_mapa:
+			continue
+		celdas_bloquedas.append(celdas_caminables)
+		celda_aparicion = datos_mapa[celdas_caminables].strip().split(';')[1]
+		celdas_bloquedas.append(celda_aparicion)
+	celdas_bloquedas.append(celda_jugador)
 	lista_enemigos = datos_mapa['280'].strip().split(';')
 	for id_enemigo in lista_enemigos:
-		celda_enemigo = str(random.randint(0,263))
-		while celda_enemigo in celdas_bloquedas:
+		try:
 			celda_enemigo = str(random.randint(0,263))
-		posx,posy = get_celdas_pos(celda_enemigo)
-		if aspect_ratio == '2':
-			posx += 133
-		enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
-		enemigo.set_colorkey((255,255,255))
-		pantalla.blit(enemigo,(posx,posy))
-		enemigos_bliteados.append((celda_enemigo,id_enemigo))
-		celdas_bloquedas.append(celda_enemigo)
-		print 'Monster bliteado'
+			while celda_enemigo in celdas_bloquedas:
+				if debug_mode:
+					print 'celda bloqueada:',celda_enemigo
+				celda_enemigo = str(random.randint(0,263))
+			if debug_mode:
+				print 'celda enemigo:',celda_enemigo
+			posx,posy = get_celdas_pos(celda_enemigo)
+			if aspect_ratio == '2':
+				posx += 133
+			enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
+			enemigo.set_colorkey((255,255,255))
+			pantalla.blit(enemigo,(posx,posy))
+			enemigos_bliteados.append((celda_enemigo,id_enemigo))
+			celdas_bloquedas.append(celda_enemigo)
+		except:
+			pass
 	return enemigos_bliteados
 
 def reblit_monster(pantalla,enemigos_bliteados):
@@ -749,4 +772,7 @@ def reblit_monster(pantalla,enemigos_bliteados):
 	return
 
 def mover_monster(pantalla,enemigos_bliteados):
+	return
+
+def colision_jugador_monster():
 	return

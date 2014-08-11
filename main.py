@@ -189,7 +189,7 @@ while hacer:
 							milliseconds = clock.tick_busy_loop(FPS)
 							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 							mouspos = pygame.mouse.get_pos()
-							character_selector_menu,juego_loop,cerrar,pausa = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,character_selector_menu,juego_loop,cerrar,pausa,datos_mapa)
+							character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados)
 							pygame.display.flip()
 							
 					elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -232,12 +232,12 @@ while hacer:
 								milliseconds = clock.tick_busy_loop(FPS)
 								pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 								mouspos = pygame.mouse.get_pos()
-								character_selector_menu,juego_loop,cerrar,pausa = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,character_selector_menu,juego_loop,cerrar,pausa)
+								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,enemigos_bliteados)
 								pygame.display.flip()
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							if pygame.mouse.get_pressed()[0]==True:
 
-								posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu = apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,datos_mapa,user,personajes_cuenta)
+								posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu = apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,datos_mapa,user,personajes_cuenta,enemigos_bliteados)
 
 					pygame.display.flip()
 

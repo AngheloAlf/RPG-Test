@@ -7,4 +7,4 @@ si celda del mapa > 264:
 271 = mapa_lateral_derecha
 272 = mapa_diagonal_izquierda
 273 = mapa_diagonal_derecha
-280 = id_monstruoss
+280 = id_monsters
