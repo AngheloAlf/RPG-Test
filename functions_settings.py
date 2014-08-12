@@ -26,3 +26,8 @@ def get_settings_debug_mode():
 		return True
 	return False
 
+def get_settings_busy_loop():
+	settings = abrir_settings()
+	if settings['busy_loop'] == 'True':
+		return True
+	return False
