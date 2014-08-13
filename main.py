@@ -236,7 +236,7 @@ while hacer:
 							pausa = True
 
 						if event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-							mover_enemigo = random.randint(1,10)
+							mover_enemigo = 1#random.randint(1,10)
 							if mover_enemigo == 1:
 								enemigos_bliteados = mover_monster(pantalla,enemigos_bliteados,datos_mapa)
 
@@ -310,7 +310,6 @@ while hacer:
 							milliseconds = clock.tick_busy_loop(FPS)
 						else:
 							milliseconds = clock.tick(FPS)
-					
 						if show_FPS:
 							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 						screenX,screenY,blit_animacion,animacion_number = animacion_pantalla(pantalla,datos_personaje[5],screenX,screenY,datos_personaje[1],info_enemigo,datos_mapa,animacion_number)
@@ -330,7 +329,7 @@ while hacer:
 							blit_hud_juego(pantalla)
 							datos_mapa = blit_mapa(pantalla,datos_personaje[5])
 							blit_laterales_mapas(pantalla,datos_mapa)
-
+							celda_pj_pelea,celda_mob_pelea = blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje)
 							#posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],celda)
 
 					if pygame.mixer.music.get_busy() == False:

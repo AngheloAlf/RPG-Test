@@ -541,7 +541,7 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 	pantalla.blit(personajerl,(posx,posy))
 	pygame.display.flip()
 	colision_pj_mob,info_enemigo = colision_jugador_monster(posx,posy,enemigos_bliteados)
-	if colision_pj_mob:
+	if colision_pj_mob and debug_mode:
 		print 'Colisionaron pj y mob'
 	if colision_pj_mob == False:
 		datos_personaje,datos_mapa,posx,posy,enemigos_bliteados = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,enemigos_bliteados)
@@ -783,7 +783,6 @@ def mover_monster(pantalla,enemigos_bliteados,datos_mapa):
 	enemigo_mover = random.choice(enemigos_bliteados)
 	enemigos_bliteados_index = enemigos_bliteados.index(enemigo_mover)
 	celda_enemigo = int(enemigo_mover[0])
-	print celda_enemigo
 	celdas_caminables = [celda_enemigo-16,celda_enemigo-15,celda_enemigo+15,celda_enemigo+16]
 	cel_cam 		  = [celda_enemigo-16,celda_enemigo-15,celda_enemigo+15,celda_enemigo+16]
 	if '265' in datos_mapa:
@@ -797,10 +796,15 @@ def mover_monster(pantalla,enemigos_bliteados,datos_mapa):
 		if celda_camin > 263 or celda_camin < 0:
 			celdas_caminables.remove(celda_camin)
 	celdas_caminables = map(str,celdas_caminables)
+	for mob in enemigos_bliteados:
+		if mob == enemigo_mover:
+			continue
+		if mob[0] in celdas_caminables:
+			celdas_caminables.remove(mob[0])
+
 	if celdas_caminables == []:
 		return enemigos_bliteados
 	nueva_celda_enemigo = random.choice(celdas_caminables)
-	print nueva_celda_enemigo
 	enemigo_mover = (nueva_celda_enemigo,enemigo_mover[1])
 	enemigos_bliteados[enemigos_bliteados_index] = enemigo_mover
 	return enemigos_bliteados
@@ -900,3 +904,24 @@ def animacion_pantalla(pantalla,mapa,screenX,screenY,clase,info_enemigo,datos_ma
 		return 0,0,False,0
 
 	return screenX,screenY,True,animacion_number
+
+def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje):
+	celdas_peleas = datos_mapa['266'].strip().split(';')
+
+	celda_pj = random.choice(celdas_peleas)
+	posx_pj,posy_pj = get_celdas_pos(celda_pj)
+	celdas_peleas.remove(celda_pj)
+	personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+	personajerl.set_colorkey((255,255,255))
+
+	celda_mob = random.choice(celdas_peleas)
+	posx_mob,posy_mob = get_celdas_pos(celda_mob)
+	enemigorl = pygame.image.load(os.path.join("media","monsters","monster"+info_enemigo[1]+".png")).convert()
+	enemigorl.set_colorkey((255,255,255))
+
+	if aspect_ratio == '2':
+		posx_pj  += 133
+		posx_mob += 133
+	pantalla.blit(personajerl,(posx_pj,posy_pj))
+	pantalla.blit(enemigorl,(posx_mob,posy_mob))
+	return celda_pj,celda_mob
