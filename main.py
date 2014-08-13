@@ -17,11 +17,14 @@ FPS 		     = get_settings_FPS()
 aspect_ratio     = get_settings_aspect_ratio()
 debug_mode   	 = get_settings_debug_mode()
 enable_busy_loop = get_settings_busy_loop()
+show_FPS 		 = get_settings_show_FPS()
 
 if debug_mode:
 	Titulo = '[DEBUG] | RPG Test'
 	print 'Debug mode activo'
 	print 'FPS:',FPS
+	if show_FPS:
+		print 'Mostrar FPS activo'
 	if aspect_ratio=='2':
 		print 'Aspect ratio: 16:9'
 	else:
@@ -145,8 +148,8 @@ while hacer:
 				milliseconds = clock.tick_busy_loop(FPS)
 			else:
 				milliseconds = clock.tick(FPS)
-			pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
-			#pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,clock.get_fps(),2))
+			if show_FPS:
+				pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 
 			mouspos = pygame.mouse.get_pos()
 			for event in pygame.event.get():
@@ -178,7 +181,8 @@ while hacer:
 					milliseconds = clock.tick_busy_loop(FPS)
 				else:
 					milliseconds = clock.tick(FPS)
-				pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+				if show_FPS:
+					pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 				
 				mouspos = pygame.mouse.get_pos()
 				for event in pygame.event.get():
@@ -204,7 +208,8 @@ while hacer:
 					milliseconds = clock.tick_busy_loop(FPS)
 				else:
 					milliseconds = clock.tick(FPS)
-				pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+				if show_FPS:
+					pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 
 				mouspos = pygame.mouse.get_pos()
 				for event in pygame.event.get():
@@ -216,7 +221,8 @@ while hacer:
 								milliseconds = clock.tick_busy_loop(FPS)
 							else:
 								milliseconds = clock.tick(FPS)
-							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+							if show_FPS:
+								pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 							mouspos = pygame.mouse.get_pos()
 							character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados)
 							pygame.display.flip()
@@ -228,6 +234,12 @@ while hacer:
 						if event.key == pygame.K_ESCAPE:
 							blit_pausa(pantalla) 
 							pausa = True
+
+						if event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+							mover_enemigo = random.randint(1,10)
+							if mover_enemigo == 1:
+								enemigos_bliteados = mover_monster(pantalla,enemigos_bliteados,datos_mapa)
+
 						if event.key == pygame.K_UP:
 							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,25,-25,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
 						elif event.key == pygame.K_DOWN:
@@ -252,14 +264,15 @@ while hacer:
 					pelea             = True
 					colision_pj_mob   = False
 					blit_animacion    = True
-					animacion_number  = random.randint(1,2)					
+					animacion_number  = random.randint(1,2)
 
 				while pausa:
 					if enable_busy_loop:
 						milliseconds = clock.tick_busy_loop(FPS)
 					else:
 						milliseconds = clock.tick(FPS)
-					pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+					if show_FPS:
+						pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 
 					mouspos = pygame.mouse.get_pos()
 					for event in pygame.event.get():
@@ -271,7 +284,8 @@ while hacer:
 									milliseconds = clock.tick_busy_loop(FPS)
 								else:
 									milliseconds = clock.tick(FPS)
-								pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+								if show_FPS:
+									pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 								mouspos = pygame.mouse.get_pos()
 								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,enemigos_bliteados)
 								pygame.display.flip()
@@ -287,8 +301,8 @@ while hacer:
 						milliseconds = clock.tick_busy_loop(FPS)
 					else:
 						milliseconds = clock.tick(FPS)
-					
-					pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+					if show_FPS:
+						pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 					mouspos = pygame.mouse.get_pos()
 
 					while blit_animacion:
@@ -297,7 +311,8 @@ while hacer:
 						else:
 							milliseconds = clock.tick(FPS)
 					
-						pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+						if show_FPS:
+							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 						screenX,screenY,blit_animacion,animacion_number = animacion_pantalla(pantalla,datos_personaje[5],screenX,screenY,datos_personaje[1],info_enemigo,datos_mapa,animacion_number)
 						if reproducir_musica:
 							pygame.mixer.music.load(os.path.join(data_dir, "Battle_start.ogg"))

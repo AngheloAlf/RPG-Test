@@ -777,11 +777,33 @@ def reblit_monster(pantalla,enemigos_bliteados):
 		pantalla.blit(enemigo,(posx,posy))
 	return
 
-def mover_monster(pantalla,enemigos_bliteados): #terminar
+def mover_monster(pantalla,enemigos_bliteados,datos_mapa): 
 	if enemigos_bliteados == []:
-		return
+		return enemigos_bliteados
 	enemigo_mover = random.choice(enemigos_bliteados)
-	return
+	enemigos_bliteados_index = enemigos_bliteados.index(enemigo_mover)
+	celda_enemigo = int(enemigo_mover[0])
+	print celda_enemigo
+	celdas_caminables = [celda_enemigo-16,celda_enemigo-15,celda_enemigo+15,celda_enemigo+16]
+	cel_cam 		  = [celda_enemigo-16,celda_enemigo-15,celda_enemigo+15,celda_enemigo+16]
+	if '265' in datos_mapa:
+		celdas_bloquedas = datos_mapa['265'].split(';')
+		celdas_bloquedas = map(int,celdas_bloquedas)
+	for celda_camin in cel_cam:
+		if '265' in datos_mapa:
+			if celda_camin in celdas_bloquedas:
+				celdas_caminables.remove(celda_camin)
+				continue
+		if celda_camin > 263 or celda_camin < 0:
+			celdas_caminables.remove(celda_camin)
+	celdas_caminables = map(str,celdas_caminables)
+	if celdas_caminables == []:
+		return enemigos_bliteados
+	nueva_celda_enemigo = random.choice(celdas_caminables)
+	print nueva_celda_enemigo
+	enemigo_mover = (nueva_celda_enemigo,enemigo_mover[1])
+	enemigos_bliteados[enemigos_bliteados_index] = enemigo_mover
+	return enemigos_bliteados
 
 def colision_jugador_monster(posx,posy,enemigos_bliteados):
 	celda_jugador = get_celda_number(posx,posy)[0]

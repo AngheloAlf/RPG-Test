@@ -31,3 +31,9 @@ def get_settings_busy_loop():
 	if settings['busy_loop'] == 'True':
 		return True
 	return False
+
+def get_settings_show_FPS():
+	settings = abrir_settings()
+	if settings['show_FPS'] == 'True':
+		return True
+	return False
