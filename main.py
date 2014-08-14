@@ -33,7 +33,8 @@ if debug_mode:
 		print 'busy_loop activo'
 	print ''
 
-print 'Bienvenido\n'
+print 'Bienvenido'
+print ''
 
 while hacer:
 	print 'Que desea hacer? Escoja un numero'
@@ -91,6 +92,10 @@ while hacer:
 			continue
 		password  = raw_input('Ingrese clave: ')
 		password2 = raw_input('Repita clave: ')
+		if password == '0' or password2 == '0':
+			crear_cuenta = False
+			print ''
+			continue
 		if verificar_password(password,password2):
 			print 'La clave no coincide'
 			continue
@@ -101,6 +106,7 @@ while hacer:
 		datos_usuario.append(user)
 		datos_usuario.append(password)
 		agregar_usuario(datos_usuario)
+		print 'Cuenta creada con exito'
 		print ''
 		crear_cuenta = False
 
@@ -368,7 +374,6 @@ while hacer:
 								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,25,25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1])
 							
 							elif event.key == pygame.K_p: ## DEBUG
-								print 'while pelea'
 								#blit_cargando(pantalla)
 								#time.sleep(4)
 								pass
