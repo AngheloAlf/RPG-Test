@@ -319,7 +319,7 @@ def crear_personaje(user,class_selected):
 
 	file_account = open('accounts.dat')
 	for linea in file_account:
-		datos_cuenta = linea.split(';')
+		datos_cuenta = linea.strip().split(';')
 		if datos_cuenta[0]=='#id_cuenta':
 			continue
 		if user.lower() == datos_cuenta[1].lower():
@@ -327,7 +327,8 @@ def crear_personaje(user,class_selected):
 	file_account.close()
 
 	file_personajes_escribir = open('personajes.dat','a')
-	escribir_personajes = str(int(id_personaje)+1)+';'+class_selected+';'+nombre_personaje_creado+';'+'1'+';'+'0'+';'+'0000'+';'+'080'+'\n'
+	id_personaje = str(int(id_personaje)+1)
+	escribir_personajes = id_personaje+';'+class_selected+';'+nombre_personaje_creado+';'+'1'+';'+'0'+';'+'0000'+';'+'080'+';'+'0'+'\n'
 	file_personajes_escribir.write(escribir_personajes)
 	file_personajes_escribir.close()
 
@@ -336,11 +337,13 @@ def crear_personaje(user,class_selected):
 	agregar = True
 	for iteracion in personajes_de_la_cuenta:
 		if iteracion == '0' and agregar:
-			lista.append(str(int(id_personaje)+1))
+			lista.append(id_personaje)
 			agregar = False
 		else:
 			lista.append(iteracion)
 
+
+	lista[4] = lista[4]+'\n'
 	datos_cuenta[3] = ','.join(lista)
 	datos_cuenta_modificados = ';'.join(datos_cuenta)
 

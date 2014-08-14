@@ -1,4 +1,8 @@
-#id_personaje;clase;nombre;nivel;experiencia;ultimo_mapa;ultima_celda
+#id_personaje;clase;nombre;nivel;experiencia;ultimo_mapa;ultima_celda;vida_extra
 1;1;TEST;1;0;0007;172
 2;1;olaolaaaaa;1;0;0007;211
 3;1;olaakase;1;0;0000;080
+3;1;olaakase;1;0;0000;080;0
+5;1;ofaakase;1;0;0000;080;0
+6;1;shebasTIAN;1;0;0000;080;0
+7;1;bflasdgsgd;1;0;0000;080;0
