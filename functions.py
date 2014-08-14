@@ -402,7 +402,6 @@ def blit_laterales_mapas(pantalla,datos_mapa):
 	return
 
 def blit_mapa(pantalla,mapa):
-
 	try:
 		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa"+mapa+".png")).convert()
 	except:
@@ -508,6 +507,7 @@ def apretar_mouse_juego_loop(mouspos):
 	return
 
 def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje,enemigos_bliteados):
+
 	if aspect_ratio == '2':
 		if posx+direX<143 or posy+direY<-35 or posx+direX>893 or posy+direY>365:
 			return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,False,None
@@ -657,7 +657,7 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 
 	return posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu
 
-def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados):
+def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados,pelea):
 	character_selector_menu = True
 	juego_loop 				= True
 	cerrar 					= True
@@ -676,18 +676,19 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 					juego_loop 				= False
 					cerrar 					= False
 					pausa 					= False
-					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
+					pelea 					= False
+					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
 				elif (441+mouseposX<mouspos[0]<580+mouseposX)and (209+mouseposY<mouspos[1]<320+mouseposY):
 					cerrar = False
 					pausa  = False
 					posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
-					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
+					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
 		elif event.type == pygame.KEYDOWN: ##apretar boton
 			if event.key == pygame.K_ESCAPE: 
 				cerrar = False
 				posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
-				return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
-	return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados 
+				return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
+	return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea 
 
 def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigos_bliteados):
 	#print datos_mapa
@@ -840,7 +841,7 @@ def animacion_pantalla(pantalla,mapa,screenX,screenY,clase,info_enemigo,datos_ma
 		if aspect_ratio == '2':
 			screenY += 18
 		else:
-			screenY += 10
+			screenY += 11
 
 	elif animacion_number == 2:
 		screenX -= 16
@@ -925,3 +926,43 @@ def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje):
 	pantalla.blit(personajerl,(posx_pj,posy_pj))
 	pantalla.blit(enemigorl,(posx_mob,posy_mob))
 	return celda_pj,celda_mob
+
+def apretar_mouse_pelea(mouspos):
+	return
+
+def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos_mapa,celda_mob_pelea,id_mob):
+	celda_jugador = get_celda_number(posx_pj,posy_pj)[0]
+	if aspect_ratio == '2':
+		if posx_pj+direX<143 or posy_pj+direY<-35 or posx_pj+direX>893 or posy_pj+direY>365:
+			return celda_jugador
+	else:
+		if posx_pj+direX<10 or posy_pj+direY<-35 or posx_pj+direX>760 or posy_pj+direY>365:
+			return celda_jugador
+
+	celdas_bloquedas = []
+	for celdas_mapa in datos_mapa:
+	 	if celdas_mapa=='265':
+	 		celdas_bloquedas = datos_mapa[celdas_mapa].strip().split(';')
+
+	celda_number = get_celda_number(posx_pj+direX,posy_pj+direY)[0]
+	if celda_number in celdas_bloquedas:
+		return celda_jugador
+
+	if debug_mode:
+	 	print 'celda:',celda_number
+	 	print 'posx:',posx_pj+direX,' posy:',posy_pj+direY
+
+	personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+	personajerl.set_colorkey((255,255,255))
+	blit_mapa(pantalla,datos_personaje[5])
+	if aspect_ratio == '2':
+		blit_laterales_mapas(pantalla,datos_mapa)
+	posx_pj += direX
+	posy_pj += direY
+	info_enemigo = (celda_mob_pelea,id_mob)
+	reblit_monster(pantalla,[info_enemigo])
+	pantalla.blit(personajerl,(posx_pj,posy_pj))
+	pygame.display.flip()
+
+	celda_jugador = get_celda_number(posx_pj,posy_pj)[0]
+	return celda_jugador

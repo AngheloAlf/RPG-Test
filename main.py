@@ -224,7 +224,7 @@ while hacer:
 							if show_FPS:
 								pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 							mouspos = pygame.mouse.get_pos()
-							character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados)
+							character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea)
 							pygame.display.flip()
 							
 					elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -236,8 +236,8 @@ while hacer:
 							pausa = True
 
 						if event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-							mover_enemigo = 1#random.randint(1,10)
-							if mover_enemigo == 1:
+							mover_enemigo = random.randint(1,10)
+							if mover_enemigo != 9 and mover_enemigo != 10:
 								enemigos_bliteados = mover_monster(pantalla,enemigos_bliteados,datos_mapa)
 
 						if event.key == pygame.K_UP:
@@ -287,7 +287,7 @@ while hacer:
 								if show_FPS:
 									pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 								mouspos = pygame.mouse.get_pos()
-								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,enemigos_bliteados)
+								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,enemigos_bliteados,pelea)
 								pygame.display.flip()
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							if pygame.mouse.get_pressed()[0]==True:
@@ -330,6 +330,7 @@ while hacer:
 							datos_mapa = blit_mapa(pantalla,datos_personaje[5])
 							blit_laterales_mapas(pantalla,datos_mapa)
 							celda_pj_pelea,celda_mob_pelea = blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje)
+							
 							#posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],celda)
 
 					if pygame.mixer.music.get_busy() == False:
@@ -339,9 +340,44 @@ while hacer:
 
 					for event in pygame.event.get():
 						if event.type == pygame.QUIT:
-							#character_selector_menu = False
-							print 'Quit'
-							#continue
+							bliteo_pop_up(pantalla)
+							cerrar = True
+							while cerrar:
+								if enable_busy_loop:
+									milliseconds = clock.tick_busy_loop(FPS)
+								else:
+									milliseconds = clock.tick(FPS)
+								if show_FPS:
+									pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+								mouspos = pygame.mouse.get_pos()
+								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea)
+								pygame.display.flip()
+								
+						elif event.type == pygame.MOUSEBUTTONDOWN:
+							if pygame.mouse.get_pressed()[0]==True:
+								apretar_mouse_pelea(mouspos)
+						elif event.type == pygame.KEYDOWN: ##apretar boton
+							posx_pj,posy_pj = get_celdas_pos(celda_pj_pelea)
+							if event.key == pygame.K_UP:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,25,-25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1])
+							elif event.key == pygame.K_DOWN:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-25,25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1])
+							elif event.key == pygame.K_LEFT:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-25,-25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1])
+							elif event.key == pygame.K_RIGHT:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,25,25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1])
+							
+							elif event.key == pygame.K_p: ## DEBUG
+								print 'while pelea'
+								#blit_cargando(pantalla)
+								#time.sleep(4)
+								pass
+							#	guardar_datos_personaje(datos_personaje,posicionX,posicionY)
+
+							#if event.key == pygame.K_d: letra d teclado
+							#if event.key == pygame.K_a: letra a teclado
+							#if event.key == pygame.K_w: letra w teclado
+							#if event.key == pygame.K_s: letra s teclado
 					pygame.display.flip()
 
 				pygame.display.flip()
