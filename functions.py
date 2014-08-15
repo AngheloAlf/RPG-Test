@@ -4,8 +4,9 @@ from functions_log_in import lista_personajes_cuenta
 from functions_settings import *
 from constants import *
 
-aspect_ratio			= get_settings_aspect_ratio()
-debug_mode 				= get_settings_debug_mode()
+aspect_ratio = get_settings_aspect_ratio()
+debug_mode	 = get_settings_debug_mode()
+language     = get_languange()
 
 def blit_selec_pers(pantalla,user):
 	seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png")).convert()
@@ -86,49 +87,49 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 
 	if (646+mouseposX<mouspos[0]<794+mouseposX)and (5+mouseposY<mouspos[1]<41+mouseposY):
 		character_selector_menu = False
-		print 'Cerrando sesion'
+		print language['lang_log_out']
 	if (45+mouseposX<mouspos[0]<256+mouseposX)and (506+mouseposY<mouspos[1]<560+mouseposY):
 		if '0' in personajes_cuenta:
 			character_creator_menu = True
 			blit_creac_pers(pantalla)
 			blit_perso_selec_creacion(class_selected,pantalla)
 		else:
-			print 'Tienes todas las ranuras ocupadas'
+			print language['lang_all_spaces_full']
 
 	if (53+mouseposX<mouspos[0]<167+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[0]
 		if personajes_cuenta[0] == '0':
-			print 'Usted no posee un personaje en esta ranura'
+			print language['lang_dont_have_char_in_space']
 		else:
-			print 'Ha escogido a '+datos_personaje_seleccionado(character_selected)[2]
+			print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (197+mouseposX<mouspos[0]<311+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[1]
 		if personajes_cuenta[1] == '0':
-			print 'Usted no posee un personaje en esta ranura'
+			print language['lang_dont_have_char_in_space']
 		else:
-			print 'Ha escogido a '+datos_personaje_seleccionado(character_selected)[2]
+			print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (341+mouseposX<mouspos[0]<455+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[2]
 		if personajes_cuenta[2] == '0':
-			print 'Usted no posee un personaje en esta ranura'
+			print language['lang_dont_have_char_in_space']
 		else:
-			print 'Ha escogido a '+datos_personaje_seleccionado(character_selected)[2]
+			print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (485+mouseposX<mouspos[0]<599+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[3]
 		if personajes_cuenta[3] == '0':
-			print 'Usted no posee un personaje en esta ranura'
+			print language['lang_dont_have_char_in_space']
 		else:
-			print 'Ha escogido a '+datos_personaje_seleccionado(character_selected)[2]
+			print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (629+mouseposX<mouspos[0]<743+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[4]
 		if personajes_cuenta[4] == '0':
-			print 'Usted no posee un personaje en esta ranura'
+			print language['lang_dont_have_char_in_space']
 		else:
-			print 'Ha escogido a '+datos_personaje_seleccionado(character_selected)[2]
+			print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 
 	if (626+mouseposX<mouspos[0]<794+mouseposX)and (560+mouseposY<mouspos[1]<594+mouseposY):
 		if character_selected == '0':
-			print 'Escoja un personaje'
+			print language['lang_select_a_character']
 		else:								#pass
 			datos_personaje = datos_personaje_seleccionado(character_selected)
 			juego_loop = True
@@ -210,72 +211,72 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_i
 	if (646+mouseposX<mouspos[0]<794+mouseposX)and (5+mouseposY<mouspos[1]<41+mouseposY):
 		character_selector_menu = False
 		character_creator_menu  = False
-		print 'Cerrando sesion'
+		print language['lang_log_out']
 
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[0]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[0]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[1]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[1]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[2]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[2]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[3]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[3]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[4]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[4]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[5]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[5]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[6]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[6]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[7]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[7]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[8]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[8]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[9]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[9]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[10]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[10]
 		blit_perso_selec_creacion(class_selected,pantalla)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[11]=='0':
-			print 'Todavia no existe esta clase'
+			print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[11]
 		blit_perso_selec_creacion(class_selected,pantalla)
 
 	elif (703+mouseposX<mouspos[0]<794+mouseposX)and (556+mouseposY<mouspos[1]<594+mouseposY):
 		if class_selected == '0':
-			print 'Escoja una clase'
+			print language['lang_select_a_class']
 		elif '0' in personajes_cuenta:
 			mensaje_nombre = pygame.image.load(os.path.join("media","menu","mensaje_nombre.png")).convert()
 			mensaje_nombre.set_colorkey((255,255,255))
@@ -285,7 +286,7 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_i
 			character_creator_menu = False
 			personajes_cuenta = blit_selec_pers(pantalla,user)
 		else:
-			print 'No tienes ranuras libres'
+			print language['lang_dont_have_free_spaces']
 
 	return personajes_cuenta,class_selected,character_creator_menu,character_selector_menu
 
@@ -301,17 +302,17 @@ def crear_personaje(user,class_selected):
 
 	verificar_nombre     = True
 	contador_verificador = 0
-	nombre_personaje_creado = raw_input('Nombre de su personaje: ')
+	nombre_personaje_creado = raw_input(language['lang_char_name']+': ')
 	while verificar_nombre:
 		contador_verificador += 1
 		while nombre_personaje_creado in lista_nombres:
-			nombre_personaje_creado = raw_input('El nombre que escojio ya existe, escoja otro: ')
+			nombre_personaje_creado = raw_input(language['lang_name_already_exist']+': ')
 			contador_verificador = 0
 		while  len(nombre_personaje_creado)>10:
-			nombre_personaje_creado = raw_input('El nombre es muy largo, escoja otro: ')
+			nombre_personaje_creado = raw_input(language['lang_name_too_long']+': ')
 			contador_verificador = 0
 		while  len(nombre_personaje_creado)<3:
-			nombre_personaje_creado = raw_input('El nombre es muy corto, escoja otro: ')
+			nombre_personaje_creado = raw_input(language['lang_name_too_short']+': ')
 			contador_verificador = 0
 		if contador_verificador == 5:
 			verificar_nombre = False
@@ -510,7 +511,6 @@ def apretar_mouse_juego_loop(mouspos):
 	return
 
 def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje,enemigos_bliteados):
-
 	if aspect_ratio == '2':
 		if posx+direX<143 or posy+direY<-35 or posx+direX>893 or posy+direY>365:
 			return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,False,None
@@ -528,7 +528,7 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 		return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,False,None
 
 	if debug_mode:
-	 	print 'celda:',celda_number
+	 	print language['lang_cell']+': '+celda_number
 	 	print 'posx:',posx+direX,' posy:',posy+direY
 
 	personajerl = pygame.image.load(os.path.join("media","clases","class_"+clase+".png")).convert()
@@ -545,7 +545,7 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 	pygame.display.flip()
 	colision_pj_mob,info_enemigo = colision_jugador_monster(posx,posy,enemigos_bliteados)
 	if colision_pj_mob and debug_mode:
-		print 'Colisionaron pj y mob'
+		print language['lang_pj_mob_same_cell']
 	if colision_pj_mob == False:
 		datos_personaje,datos_mapa,posx,posy,enemigos_bliteados = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,enemigos_bliteados)
 	return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo
@@ -561,7 +561,7 @@ def bliteo_pop_up(pantalla):
 	return
 
 def guardar_datos_personaje(datos_personaje,posx,posy):
-	print 'Guardando datos'
+	print language['lang_saving_data']
 
 	datos_personaje[6],problemas = get_celda_number(posx,posy)
 	datos_personaje[6] = str(datos_personaje[6])
@@ -569,10 +569,11 @@ def guardar_datos_personaje(datos_personaje,posx,posy):
 
 	file_personajes = open('personajes.dat')
 	for linea_personajes in file_personajes:
-		if linea_personajes.strip().split(';')[0] != datos_personaje[1]:
+		print linea_personajes.strip().split(';')[0],datos_personaje[0]
+		if linea_personajes.strip().split(';')[0] != datos_personaje[0]:
 			lista.append(linea_personajes)
 		else:
-			valor = datos_personaje[0]+';'+datos_personaje[1]+';'+datos_personaje[2]+';'+datos_personaje[3]+';'+datos_personaje[4]+';'+datos_personaje[5]+';'+datos_personaje[6]+'\n'
+			valor = datos_personaje[0]+';'+datos_personaje[1]+';'+datos_personaje[2]+';'+datos_personaje[3]+';'+datos_personaje[4]+';'+datos_personaje[5]+';'+datos_personaje[6]+';'+datos_personaje[7]+'\n'
 			lista.append(valor)
 	file_personajes.close()
 
@@ -590,9 +591,9 @@ def guardar_datos_personaje(datos_personaje,posx,posy):
 	file_personajes_escribir.close()
 
 	if problemas:
-		print 'Ha ocurrido un error al guardar los datos'
+		print language['lang_saving_error']
 	else:
-		print 'Datos guardados con exito'
+		print language['lang_saving_successful']
 	return
 
 def blitear_datos_mapa(pantalla,mapa,datos_mapa):
@@ -651,7 +652,7 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 		juego_loop 				= False
 		pausa 					= False 
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (298+mouseposY<mouspos[1]<336+mouseposY): #salir
-		print 'Cerrando sesion'
+		print language['lang_log_out']
 		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
 		character_selector_menu = False
 		juego_loop 				= False
@@ -673,7 +674,7 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if mouse_apretado[0]==True:
 				if (220+mouseposX<mouspos[0]<343+mouseposX)and (210+mouseposY<mouspos[1]<320+mouseposY):
-					print 'Cerrando sesion'
+					print language['lang_log_out']
 					guardar_datos_personaje(datos_personaje,posx,posy)
 					character_selector_menu = False
 					juego_loop 				= False
@@ -702,13 +703,13 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				posx += 133
 			#print posicionX,posx,posicionY,posy
 			if posicionX == posx and posicionY == posy:
-				print 'Cargando mapa'
+				print language['lang_loading_map']
 				time.sleep(0.5)
 				datos_celda			= datos_mapa[celdas].split(';')
 				nueva_celda         = datos_celda[1]
 				datos_personaje[5]  = datos_celda[0]
 				if debug_mode:
-					print 'Mapa:',datos_personaje[5]
+					print language['lang_map']+': '+datos_personaje[5]
 				datos_mapa          = blit_mapa(pantalla,datos_personaje[5])
 				blit_laterales_mapas(pantalla,datos_mapa)
 				blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
@@ -753,10 +754,10 @@ def blit_monster(pantalla,datos_mapa,posicionX,posicionY):
 			celda_enemigo = str(random.randint(0,263))
 			while celda_enemigo in celdas_bloquedas:
 				if debug_mode:
-					print 'celda bloqueada:',celda_enemigo
+					print language['lang_bloqued_cell']+': '+celda_enemigo
 				celda_enemigo = str(random.randint(0,263))
 			if debug_mode:
-				print 'celda enemigo:',celda_enemigo
+				print language['lang_enemy_cell']+': '+celda_enemigo
 			posx,posy = get_celdas_pos(celda_enemigo)
 			if aspect_ratio == '2':
 				posx += 133
@@ -768,7 +769,7 @@ def blit_monster(pantalla,datos_mapa,posicionX,posicionY):
 		except:
 			pass
 	if debug_mode:
-		print 'Enemigos bliteados:',enemigos_bliteados
+		print language['lang_blitted_mobs']+': '+enemigos_bliteados
 	return enemigos_bliteados
 
 def reblit_monster(pantalla,enemigos_bliteados):
@@ -821,7 +822,7 @@ def colision_jugador_monster(posx,posy,enemigos_bliteados):
 	return False,None
 
 def animacion_pantalla(pantalla,mapa,screenX,screenY,clase,info_enemigo,datos_mapa,animacion_number):
-	#animacion_number = 1
+	#animacion_number = 2
 	try:
 		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa"+mapa+".png")).convert()
 	except:
@@ -934,6 +935,8 @@ def apretar_mouse_pelea(mouspos):
 	return
 
 def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos_mapa,celda_mob_pelea,id_mob):
+	if aspect_ratio == '2':
+		posx_pj += 133
 	celda_jugador = get_celda_number(posx_pj,posy_pj)[0]
 	if aspect_ratio == '2':
 		if posx_pj+direX<143 or posy_pj+direY<-35 or posx_pj+direX>893 or posy_pj+direY>365:
@@ -951,17 +954,19 @@ def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos
 	if celda_number in celdas_bloquedas:
 		return celda_jugador
 
-	if debug_mode:
-	 	print 'celda:',celda_number
-	 	print 'posx:',posx_pj+direX,' posy:',posy_pj+direY
-
-	personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
-	personajerl.set_colorkey((255,255,255))
-	blit_mapa(pantalla,datos_personaje[5])
 	if aspect_ratio == '2':
 		blit_laterales_mapas(pantalla,datos_mapa)
 	posx_pj += direX
 	posy_pj += direY
+
+	if debug_mode:
+	 	print language['lang_cell']+': '+get_celda_number(posx_pj,posy_pj)[0]
+	 	print 'posx:',posx_pj,' posy:',posy_pj
+
+	personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+	personajerl.set_colorkey((255,255,255))
+	blit_mapa(pantalla,datos_personaje[5])
+
 	info_enemigo = (celda_mob_pelea,id_mob)
 	reblit_monster(pantalla,[info_enemigo])
 	pantalla.blit(personajerl,(posx_pj,posy_pj))

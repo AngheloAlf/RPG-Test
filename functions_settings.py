@@ -37,3 +37,17 @@ def get_settings_show_FPS():
 	if settings['show_FPS'] == 'True':
 		return True
 	return False
+
+def get_languange():
+	settings = abrir_settings()
+	idioma = settings['language']
+	lang = dict()
+	try:
+		file_lang = open('languages\lang_'+idioma+'.lang')
+	except:
+		file_lang = open('languages\lang_es.lang')
+		print 'Error cargando archivo de idiomas, cargando el predeterminado'
+	for linea in file_lang:
+		alf = linea.strip().split(' = ')
+		lang[alf[0]] = alf[1]
+	return lang

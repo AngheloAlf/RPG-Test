@@ -1,9 +1,10 @@
-print 'Cargado...'
+from functions_settings import *
+language = get_languange()
+print language['lang_loading']
 import pygame, sys, os, random, math, time
 from pygame.locals import *
 from functions import *
 from functions_log_in import *
-from functions_settings import *
 from constants import *
 
 cosas_hacer = ('0','1','2')
@@ -12,7 +13,7 @@ hacer  		     = True
 sesion 		     = False
 crear_cuenta     = False
 oli              = False
-Titulo		     = 'RPG Test'
+Titulo		     = language['lang_titulo']
 FPS 		     = get_settings_FPS()
 aspect_ratio     = get_settings_aspect_ratio()
 debug_mode   	 = get_settings_debug_mode()
@@ -20,93 +21,93 @@ enable_busy_loop = get_settings_busy_loop()
 show_FPS 		 = get_settings_show_FPS()
 
 if debug_mode:
-	Titulo = '[DEBUG] | RPG Test'
-	print 'Debug mode activo'
+	Titulo = '[DEBUG] | '+language['lang_titulo']
+	print language['lang_debug_on']
 	print 'FPS:',FPS
 	if show_FPS:
-		print 'Mostrar FPS activo'
+		print language['lang_show_fps_on']
 	if aspect_ratio=='2':
-		print 'Aspect ratio: 16:9'
+		print language['lang_aspect_ratio_2']
 	else:
-		print 'Aspect ratio: 4:3'
+		print language['lang_aspect_ratio_1']
 	if enable_busy_loop:
-		print 'busy_loop activo'
+		print language['lang_busy_loop_on']
 	print ''
 
-print 'Bienvenido'
+print language['lang_welcome']
 print ''
 
 while hacer:
-	print 'Que desea hacer? Escoja un numero'
-	print 'Salir (0)'
-	print 'Iniciar sesion (1)'
-	print 'Crear cuenta (2)'
+	print language['lang_select_number']
+	print language['lang_exit']
+	print language['lang_log_in']
+	print language['lang_make_account']
 
-	seleccion_hacer = raw_input('Escoja una opcion: ')
+	seleccion_hacer = raw_input(language['lang_select_option']+': ')
 
 	while seleccion_hacer not in cosas_hacer:
-		print 'Opcion no valida'
-		seleccion_hacer = raw_input('Escoja una opcion: ')
+		print language['lang_not_valid']
+		seleccion_hacer = raw_input(language['lang_select_option']+': ')
 	if seleccion_hacer == '0':
 		hacer = False
 	elif seleccion_hacer == '1':
 		sesion = True
 		print ''
-		print 'Ha escojido iniciar sesion'
-		print 'Ponga 0 para salir'
+		print language['lang_select_log_in']
+		print language['lang_zero_to_exit']
 		print ''
 	elif seleccion_hacer == '2':
 		print ''
-		print 'Ha escogido crear cuenta'
-		print 'Ponga 0 para salir'
+		print language['lang_select_make_account']
+		print language['lang_zero_to_exit']
 		print ''
 		crear_cuenta = True
 
 	while sesion:
-		user	 = raw_input('Ingrese usuario: ')
+		user	 = raw_input(language['lang_input_user']+': ')
 		if user == '0':
 			sesion = False
 			continue
-		password = raw_input('Ingrese clave: ')
+		password = raw_input(language['lang_input_pass']+': ')
 		clave_verificada = verificar_usuario_clave(user,password)
 		if clave_verificada:
-			print 'Iniciando sesion'
+			print language['lang_starting_sesion']
 			sesion = False
 			#hacer = False
 			oli    = True
 		else:
 			print ''
-			print 'El usuario o la clave es incorrecta'
+			print language['lang_user_pass_error']
 			print ''
 	while crear_cuenta:
-		user      = raw_input('Ingrese usuario: ')
+		user      = raw_input(language['lang_input_user']+': ')
 		if user == '0':
 			crear_cuenta = False
 			print ''
 			continue
 		if revisar_existencia_usuario(user):
-			print 'Este usuario ya existe, escoja otro'
+			print language['lang_user_already_exist']
 			continue
 		if ';' in user or len(user)<1:
-			print 'El usuario no es valido, escoja otro'
+			print language['lang_user_not_valid']
 			continue
-		password  = raw_input('Ingrese clave: ')
-		password2 = raw_input('Repita clave: ')
+		password  = raw_input(language['lang_input_pass']+': ')
+		password2 = raw_input(language['lang_reinput_pass']+': ')
 		if password == '0' or password2 == '0':
 			crear_cuenta = False
 			print ''
 			continue
 		if verificar_password(password,password2):
-			print 'La clave no coincide'
+			print language['lang_pass_error']
 			continue
 		if ';' in password:
-			print 'La clave no es valida, escoja otro'
+			print language['lang_pass_not_valid']
 			continue
 		datos_usuario = []
 		datos_usuario.append(user)
 		datos_usuario.append(password)
 		agregar_usuario(datos_usuario)
-		print 'Cuenta creada con exito'
+		print language['lang_make_account_successful']
 		print ''
 		crear_cuenta = False
 
@@ -147,7 +148,7 @@ while hacer:
 		#battle_start_music 	= pygame.mixer.Sound(os.path.join(data_dir, "Battle_start.ogg"))
 		#battle_loop_music 	= pygame.mixer.Sound(os.path.join(data_dir, "Battle_loop.ogg"))
 
-		print 'Sesion iniciada con exito'
+		print language['lang_log_in_successful']
 
 		while character_selector_menu:
 			if enable_busy_loop:
@@ -161,12 +162,12 @@ while hacer:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					character_selector_menu = False
-					print 'Cerrando sesion'
+					print language['lang_log_out']
 					continue
 				elif event.type == pygame.KEYDOWN: ##apretar boton
 					if event.key == pygame.K_ESCAPE: 
 						character_selector_menu = False
-						print 'Cerrando sesion'
+						print language['lang_log_out']
 						break
 		            #if event.key == pygame.K_d: letra d teclado
 		            #if event.key == pygame.K_a: letra a teclado
@@ -195,7 +196,7 @@ while hacer:
 					if event.type == pygame.QUIT:
 						character_creator_menu  = False
 						character_selector_menu = False
-						print 'Cerrando sesion'
+						print language['lang_log_out']
 						continue
 					elif event.type == pygame.KEYDOWN: ##apretar boton
 						if event.key == pygame.K_ESCAPE: 
