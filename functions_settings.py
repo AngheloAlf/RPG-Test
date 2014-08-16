@@ -51,3 +51,17 @@ def get_languange():
 		alf = linea.strip().split(' = ')
 		lang[alf[0]] = alf[1]
 	return lang
+
+def get_settings_resolution():
+	settings = abrir_settings()
+	if get_settings_aspect_ratio() == '2':
+		if settings['resolution'] == '1066x600':
+			return (1066,600)
+		if settings['resolution'] == '800x600':
+			return (1066,600)
+	else:
+		if settings['resolution'] == '800x600':
+			return (800,600)
+		if settings['resolution'] == '1066x600':
+			return (800,600)
+	return (800,600)

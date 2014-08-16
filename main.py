@@ -19,6 +19,7 @@ aspect_ratio     = get_settings_aspect_ratio()
 debug_mode   	 = get_settings_debug_mode()
 enable_busy_loop = get_settings_busy_loop()
 show_FPS 		 = get_settings_show_FPS()
+resolution		 = get_settings_resolution()
 
 if debug_mode:
 	Titulo = '[DEBUG] | '+language['lang_titulo']
@@ -114,13 +115,8 @@ while hacer:
 	if oli:
 		oli 					= False
 		pygame.init()
-		
-		if aspect_ratio == '2':
-			pantalla			= pygame.display.set_mode((1066,600))
-		else:
-			pantalla			= pygame.display.set_mode((800,600))
+		pantalla			= pygame.display.set_mode(resolution)
 		pygame.display.set_caption(Titulo)
-		fondo_blanco  			= pygame.image.load(os.path.join("media","blanco.png")).convert()
 		clock 					= pygame.time.Clock()
 		character_selector_menu = True
 		character_creator_menu  = False
@@ -138,6 +134,7 @@ while hacer:
 		screenY 				= 0
 		contador_pelea 			= 0
 		animacion_number   		= 0
+		datos_imagenes			= None
 
 		personajes_cuenta = blit_selec_pers(pantalla,user)
 		lista_id_clases = id_clases()
@@ -221,7 +218,7 @@ while hacer:
 				mouspos = pygame.mouse.get_pos()
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
-						bliteo_pop_up(pantalla)
+						bliteo_salir_x(pantalla)
 						cerrar = True
 						while cerrar:
 							if enable_busy_loop:
@@ -284,7 +281,7 @@ while hacer:
 					mouspos = pygame.mouse.get_pos()
 					for event in pygame.event.get():
 						if event.type == pygame.QUIT:
-							bliteo_pop_up(pantalla)
+							bliteo_salir_x(pantalla)
 							cerrar = True
 							while cerrar:
 								if enable_busy_loop:
@@ -347,7 +344,7 @@ while hacer:
 
 					for event in pygame.event.get():
 						if event.type == pygame.QUIT:
-							bliteo_pop_up(pantalla)
+							bliteo_salir_x(pantalla)
 							cerrar = True
 							while cerrar:
 								if enable_busy_loop:
