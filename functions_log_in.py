@@ -38,7 +38,6 @@ def agregar_usuario(datos):
 	escribir = str(int(id_user)+1)+';'+datos[0]+';'+datos[1]+';'+'0,0,0,0,0'+'\n'
 	add_user.write(escribir)
 	add_user.close()
-	print'Cuenta creada con exito'
 	return
 
 def lista_personajes_cuenta(user):
@@ -53,4 +52,3 @@ def lista_personajes_cuenta(user):
 			break
 	file_users.close()
 	return personajes
-
