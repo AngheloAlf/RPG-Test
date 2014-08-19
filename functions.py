@@ -4,13 +4,16 @@ from functions_log_in import lista_personajes_cuenta
 from functions_settings import *
 from constants import *
 
-aspect_ratio = get_settings_aspect_ratio()
-debug_mode	 = get_settings_debug_mode()
-language     = get_languange()
-resolution   = get_settings_resolution()
+aspect_ratio  	= get_settings_aspect_ratio()
+debug_mode		= get_settings_debug_mode()
+language 		= get_languange()
+resolution  	= get_settings_resolution()
+mult_resolution = get_multiplicator_resolution()
+FPS 		    = get_settings_FPS()
 
-def blit_selec_pers(pantalla,user):
+def blit_selec_pers(pantalla,user): 
 	seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png"))
+	seleccion_personajes = pygame.transform.scale(seleccion_personajes,(int(800*mult_resolution),int(600*mult_resolution)))
 	lista    		= []
 	screenX 		= 0
 	screenY 		= 0
@@ -24,6 +27,7 @@ def blit_selec_pers(pantalla,user):
 		posx_character  = 186
 		posx 			= 178
 		lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png"))
+		lateral         = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
 		pantalla.blit(lateral,(0,0))
 		pantalla.blit(lateral,(933,0))
 
@@ -43,6 +47,7 @@ def blit_selec_pers(pantalla,user):
 			lista.append('0')
 	for bliteamiento in lista:
 		class_character = pygame.image.load(os.path.join("media","menu","class_"+bliteamiento+"_selection.png")).convert()
+		class_character = pygame.transform.scale(class_character,(int(115*mult_resolution),int(295*mult_resolution)))
 		class_character.set_colorkey((255,255,255))
 		pantalla.blit(class_character,(posx_character,posy_character))
 		posx_character += 144
@@ -72,7 +77,7 @@ def blit_selec_pers(pantalla,user):
 
 	return personajes_cuenta
 
-def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta):
+def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta,datos_imagenes):
 	character_selector_menu = True
 	character_creator_menu  = False
 	datos_personaje 		= None
@@ -134,15 +139,17 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 			print language['lang_select_a_character']
 		else:								#pass
 			datos_personaje = datos_personaje_seleccionado(character_selected)
-			juego_loop = True
-			blit_hud_juego(pantalla)
-			datos_mapa = blit_mapa(pantalla,datos_personaje[5])
-			blit_laterales_mapas(pantalla,datos_mapa)
-			blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
-			posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],datos_personaje[6])
+			datos_mapa      = get_datos_mapa(datos_personaje)
+			datos_imagenes  = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa)
+			juego_loop      = True
+			blit_hud_juego(pantalla,datos_imagenes)
+			blit_laterales_mapas(pantalla,datos_mapa,datos_imagenes)
+			blit_mapa(pantalla,datos_imagenes)
+			blitear_datos_mapa(pantalla,datos_mapa,datos_imagenes)
+			posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje,datos_imagenes)
 			if '280' in datos_mapa:
-				enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY)
-	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados
+				enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes)
+	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados,datos_imagenes
 
 def id_clases():
 	lista_clases = []
@@ -165,15 +172,18 @@ def blit_creac_pers(pantalla):
 		screenX = 133
 		posx    = 169
 		lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png"))
+		lateral         = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
 		pantalla.blit(lateral,(0,0))
 		pantalla.blit(lateral,(933,0))
 	creacion_personaje 	= pygame.image.load(os.path.join("media","menu","creacion_personaje.png"))
+	creacion_personaje  = pygame.transform.scale(creacion_personaje,(int(800*mult_resolution),int(600*mult_resolution)))
 	pantalla.blit(creacion_personaje,(screenX,screenY))
 	lista_clases = id_clases()
 
 	for bliteamiento in lista_clases:
 		contador += 1
 		class_icon	= pygame.image.load(os.path.join("media","menu","class_"+bliteamiento+"_icon.png")).convert()
+		class_icon  = pygame.transform.scale(class_icon,(int(54*mult_resolution),int(54*mult_resolution)))
 		class_icon.set_colorkey((255,255,255))
 		pantalla.blit(class_icon,(posx,posy))
 		posx     += 59
@@ -192,6 +202,7 @@ def blit_perso_selec_creacion(class_selected,pantalla):
 		screenX = 486
 	blit_creac_pers(pantalla)
 	character_class = pygame.image.load(os.path.join("media","menu","class_"+class_selected+"_selection.png")).convert()
+	character_class  = pygame.transform.scale(character_class,(int(115*mult_resolution),int(295*mult_resolution)))
 	character_class.set_colorkey((255,255,255))
 	pantalla.blit(character_class,(screenX,screenY))
 	return
@@ -368,141 +379,191 @@ def crear_personaje(user,class_selected):
 	escribir_file_accounts.close()
 	return
 
-def importar_imagenes(datos_imagenes,datos_personaje,datos_mapa):
-	if datos_imagenes == None:
-		print language['lang_loading_images']
-		datos_imagenes = list()
-		datos_lateral = list()
-		# [hud,mapa_image,cuadricula,datos_lateral,cuadricula_lateral,personajerl,cerrar_x,estrella,bloqued,pausa,imagenes_enemigos,negro,blanco]
-		hud     		   = pygame.image.load(os.path.join("media","juego","hud.png")).convert()
-		mapa_image		   = pygame.image.load(os.path.join("media","mapas","mapa"+datos_personaje[5]+".png")).convert()
-		cuadricula 		   = pygame.image.load(os.path.join("media","mapas","predef.png")).convert()
-		cuadricula.set_colorkey((255,255,255))
-		lateral			   = pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
-		cuadricula_lateral = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
-		cuadricula_lateral.set_colorkey((255,255,255))
-
-		if aspect_ratio == '2':
-			if '272' in  datos_mapa:
-				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
-				datos_lateral.append(mapa_lateral)
-			else:
-				datos_lateral.append(lateral)
-			if '273' in  datos_mapa:
-				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
-				datos_lateral.append(mapa_lateral)
-			else:
-				datos_lateral.append(lateral)
-			if '270' in  datos_mapa:
-				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
-				datos_lateral.append(mapa_lateral)
-			else:
-				datos_lateral.append(lateral)
-			if '271' in  datos_mapa:
-				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
-				datos_lateral.append(mapa_lateral)
-			else:
-				datos_lateral.append(lateral)
-
-		personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
-		personajerl = pygame.transform.scale(personajerl,(30,60))
-		personajerl.set_colorkey((255,255,255))
-
-		cerrar_x = pygame.image.load(os.path.join("media","juego","salir.png")).convert()
-		cerrar_x.set_colorkey((255,255,255))
-
-		estrella = pygame.image.load(os.path.join("media","juego","estrella.png")).convert()
-		estrella.set_colorkey((255,255,255))
-		bloqued = pygame.image.load(os.path.join("media","juego","bloqued.png")).convert()
-		bloqued.set_colorkey((255,255,255))
-
-		pausa = pygame.image.load(os.path.join("media","juego","pausa.png")).convert()
-		pausa.set_colorkey((255,255,255))
-
-		imagenes_enemigos = list()
-		if '280' in datos_mapa:
-			lista_enemigos = datos_mapa['280'].strip().split(';')
-			for id_enemigo in lista_enemigos:
-				enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
-				enemigo.set_colorkey((255,255,255))
-				imagenes_enemigos.append(enemigo)
-
-		negro  = pygame.image.load(os.path.join("media","negro.png")).convert()
-		blanco = pygame.image.load(os.path.join("media","blanco.png")).convert()
-		
-
-	else:
-		pass
-	return datos_imagenes
-
-def blit_hud_juego(pantalla):
-	screenX = 0
-	screenY = 0
-	if aspect_ratio == '2':
-		screenX = 133
-	pre_def_hud = pygame.image.load(os.path.join("media","juego","hud.png")).convert()
-	pantalla.blit(pre_def_hud,(screenX,screenY))
-	return
-
-def blit_laterales_mapas(pantalla,datos_mapa):
-	cuadricula = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
-	cuadricula.set_colorkey((255,255,255))
-	lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
-	if aspect_ratio == '2':
-		if '272' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
-			pantalla.blit(mapa_lateral,(-667,448))
-			pantalla.blit(cuadricula,(-667,450))
-		else:
-			pantalla.blit(lateral,(0,448))
-		if '273' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
-			pantalla.blit(mapa_lateral,(933,448))
-			pantalla.blit(cuadricula,(933,450))
-		else:
-			pantalla.blit(lateral,(933,448))
-		if '270' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
-			pantalla.blit(mapa_lateral,(-667,0))
-			pantalla.blit(cuadricula,(-667,0))
-		else:
-			pantalla.blit(lateral,(0,0))
-		if '271' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
-			pantalla.blit(mapa_lateral,(933,0))
-			pantalla.blit(cuadricula,(933,0))
-		else:
-			pantalla.blit(lateral,(933,0))
-		
-	return
-
-def blit_mapa(pantalla,mapa):
+def get_datos_mapa(datos_personaje):
+	datos_mapa = dict()
 	try:
-		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa"+mapa+".png")).convert()
-	except:
-		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa0000.png")).convert()
-		mapa = '0000'
-
-	datos_mapa      = dict()
-	try:
-		file_datos_mapa = open('media\mapas\mapa'+mapa+'.dat')
+		file_datos_mapa = open('media\mapas\mapa'+datos_personaje[5]+'.dat')
 		for linea in file_datos_mapa:
 			datos_mapa[linea.strip().split(' = ')[0]] = linea.strip().split(' = ')[1]
 		file_datos_mapa.close()
 	except:
 		pass
+	return datos_mapa
 
+def importar_imagenes(datos_imagenes,datos_personaje,datos_mapa):
+	if datos_imagenes == None:
+		print language['lang_loading_images']
+		datos_lateral     = list()
+		imagenes_enemigos = list()
+		# [hud,mapa_image,cuadricula,datos_lateral,cuadricula_lateral,personajerl,cerrar_x,estrella,bloqued,pausa,imagenes_enemigos,negro,blanco]
+		hud     		   = pygame.image.load(os.path.join("media","juego","hud.png")).convert()
+		hud 			   = pygame.transform.scale(hud,(int(800*mult_resolution),int(600*mult_resolution)))
+		mapa_image		   = pygame.image.load(os.path.join("media","mapas","mapa"+datos_personaje[5]+".png")).convert()
+		mapa_image		   = pygame.transform.scale(mapa_image,(int(800*mult_resolution),int(450*mult_resolution)))
+		cuadricula 		   = pygame.image.load(os.path.join("media","mapas","predef.png")).convert()
+		cuadricula		   = pygame.transform.scale(cuadricula,(int(800*mult_resolution),int(450*mult_resolution)))
+		cuadricula.set_colorkey((255,255,255))
+		lateral			   = pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
+		lateral			   = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
+		cuadricula_lateral = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
+		cuadricula_lateral = pygame.transform.scale(cuadricula_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+		cuadricula_lateral.set_colorkey((255,255,255))
+
+		if aspect_ratio == '2':
+			if '272' in  datos_mapa:
+				mapa_lateral 	= pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+			if '273' in  datos_mapa:
+				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+			if '270' in  datos_mapa:
+				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+			if '271' in  datos_mapa:
+				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+
+		personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+		personajerl = pygame.transform.scale(personajerl,(int(30*mult_resolution),int(60*mult_resolution)))
+		personajerl.set_colorkey((255,255,255))
+
+		cerrar_x = pygame.image.load(os.path.join("media","juego","salir.png")).convert()
+		cerrar_x = pygame.transform.scale(cerrar_x,(int(800*mult_resolution),int(450*mult_resolution)))
+		cerrar_x.set_colorkey((255,255,255))
+
+		estrella = pygame.image.load(os.path.join("media","juego","estrella.png")).convert()
+		estrella = pygame.transform.scale(estrella,(int(30*mult_resolution),int(75*mult_resolution)))
+		estrella.set_colorkey((255,255,255))
+		bloqued = pygame.image.load(os.path.join("media","juego","bloqued.png")).convert()
+		bloqued = pygame.transform.scale(bloqued,(int(30*mult_resolution),int(75*mult_resolution)))
+		bloqued.set_colorkey((255,255,255))
+
+		pausa = pygame.image.load(os.path.join("media","juego","pausa.png")).convert()
+		pausa = pygame.transform.scale(pausa,(int(800*mult_resolution),int(450*mult_resolution)))
+		pausa.set_colorkey((255,255,255))
+
+		if '280' in datos_mapa:
+			lista_enemigos = datos_mapa['280'].strip().split(';')
+			for id_enemigo in lista_enemigos:
+				enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
+				enemigo   = pygame.transform.scale(enemigo,(int(30*mult_resolution),int(60*mult_resolution)))
+				enemigo.set_colorkey((255,255,255))
+				imagenes_enemigos.append((enemigo,id_enemigo))
+
+		negro  = pygame.image.load(os.path.join("media","negro.png")).convert()
+		blanco = pygame.image.load(os.path.join("media","blanco.png")).convert()
+
+		datos_imagenes = [hud,mapa_image,cuadricula,datos_lateral,cuadricula_lateral,personajerl,cerrar_x,estrella,bloqued,pausa,imagenes_enemigos,negro,blanco]
+	else:
+		##datos_imagenes = [hud,#mapa_image,cuadricula,#datos_lateral,cuadricula_lateral,personajerl,cerrar_x,estrella,bloqued,pausa,#imagenes_enemigos,negro,blanco]
+		datos_lateral      = list()
+		imagenes_enemigos  = list()
+		mapa_image		   = pygame.image.load(os.path.join("media","mapas","mapa"+datos_personaje[5]+".png")).convert()
+		mapa_image		   = pygame.transform.scale(mapa_image,(int(800*mult_resolution),int(450*mult_resolution)))
+		lateral			   = pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
+		lateral			   = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
+		
+		if aspect_ratio == '2':
+			if '272' in  datos_mapa:
+				mapa_lateral 	= pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+			if '273' in  datos_mapa:
+				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+			if '270' in  datos_mapa:
+				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+			if '271' in  datos_mapa:
+				mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
+				mapa_lateral	= pygame.transform.scale(mapa_lateral,(int(800*mult_resolution),int(450*mult_resolution)))
+				datos_lateral.append(mapa_lateral)
+			else:
+				datos_lateral.append(lateral)
+
+		if '280' in datos_mapa:
+			lista_enemigos = datos_mapa['280'].strip().split(';')
+			for id_enemigo in lista_enemigos:
+				enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
+				enemigo   = pygame.transform.scale(enemigo,(int(30*mult_resolution),int(60*mult_resolution)))
+				enemigo.set_colorkey((255,255,255))
+				imagenes_enemigos.append((enemigo,id_enemigo))
+
+		datos_imagenes[1]  = mapa_image
+		datos_imagenes[3]  = datos_lateral
+		datos_imagenes[10] = imagenes_enemigos
+
+	return datos_imagenes
+
+def blit_hud_juego(pantalla,datos_imagenes):
 	screenX = 0
 	screenY = 0
 	if aspect_ratio == '2':
 		screenX = 133
+	#pre_def_hud = pygame.image.load(os.path.join("media","juego","hud.png")).convert()
+	pantalla.blit(datos_imagenes[0],(screenX,screenY))
+	return
 
-	pantalla.blit(mapa_image,(screenX,screenY))
-	cuadricula = pygame.image.load(os.path.join("media","mapas","predef.png")).convert()
-	cuadricula.set_colorkey((255,255,255))
-	pantalla.blit(cuadricula,(screenX,screenY))
+def blit_laterales_mapas(pantalla,datos_mapa,datos_imagenes):
+	#cuadricula = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
+	#cuadricula.set_colorkey((255,255,255))
+	#lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
+	datos_lateral = datos_imagenes[3]
+	if aspect_ratio == '2':
+		if '272' in  datos_mapa:
+		#	mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
+			pantalla.blit(datos_lateral[0],(-667,448))
+			pantalla.blit(datos_imagenes[4],(-667,450))
+		else:
+			pantalla.blit(datos_lateral[0],(0,448))
+		if '273' in  datos_mapa:
+		#	mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
+			pantalla.blit(datos_lateral[1],(933,448))
+			pantalla.blit(datos_imagenes[4],(933,450))
+		else:
+			pantalla.blit(datos_lateral[1],(933,448))
+		if '270' in  datos_mapa:
+		#	mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
+			pantalla.blit(datos_lateral[2],(-667,0))
+			pantalla.blit(datos_imagenes[4],(-667,0))
+		else:
+			pantalla.blit(datos_lateral[2],(0,0))
+		if '271' in  datos_mapa:
+		#	mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
+			pantalla.blit(datos_lateral[3],(933,0))
+			pantalla.blit(datos_imagenes[4],(933,0))
+		else:
+			pantalla.blit(datos_lateral[3],(933,0))	
+	return
 
-	return datos_mapa
+def blit_mapa(pantalla,datos_imagenes):
+	screenX = 0
+	screenY = 0
+	if aspect_ratio == '2':
+		screenX = 133
+	pantalla.blit(datos_imagenes[1],(screenX,screenY))
+	pantalla.blit(datos_imagenes[2],(screenX,screenY))
+	return 
 
 def datos_personaje_seleccionado(character_selected):
 	file_personajes = open('personajes.dat')
@@ -569,20 +630,43 @@ def get_celda_number(posx,posy):
 
 	return celda_number,problemas
 
-def blit_personaje_en_mapa(pantalla,clase,celda):
-	personajerl = pygame.image.load(os.path.join("media","clases","class_"+clase+".png")).convert()
-	personajerl = pygame.transform.scale(personajerl,(30,60))
-	personajerl.set_colorkey((255,255,255))
-	posx,posy = get_celdas_pos(celda)
+def blitear_datos_mapa(pantalla,datos_mapa,datos_imagenes):
+	for celdas in datos_mapa:
+		if celdas<='264':
+			posx,posy = get_celdas_pos(celdas)
+			if aspect_ratio == '2':
+				posx += 133
+			#estrella  = pygame.image.load(os.path.join("media","juego","estrella.png")).convert()
+			#estrella.set_colorkey((255,255,255))
+			pantalla.blit(datos_imagenes[7],(posx,posy))
+
+		if debug_mode:
+			## blitear reestricciones de movimiento	
+			if celdas=='265':
+				celdas_bloquedas = datos_mapa[celdas].strip().split(';')
+				#bloqued = pygame.image.load(os.path.join("media","juego","bloqued.png")).convert()
+				#sbloqued.set_colorkey((255,255,255))
+				for n_celda_bloqueda in celdas_bloquedas:
+					posx,posy = get_celdas_pos(n_celda_bloqueda)
+					if aspect_ratio == '2':
+						posx += 133
+					pantalla.blit(datos_imagenes[8],(posx,posy))
+	return
+
+def blit_personaje_en_mapa(pantalla,datos_personaje,datos_imagenes):
+	#personajerl = pygame.image.load(os.path.join("media","clases","class_"+clase+".png")).convert()
+	#personajerl = pygame.transform.scale(personajerl,(30,60))
+	#personajerl.set_colorkey((255,255,255))
+	posx,posy = get_celdas_pos(datos_personaje[6])
 	if aspect_ratio == '2':
 		posx += 133
-	pantalla.blit(personajerl,(posx,posy))
+	pantalla.blit(datos_imagenes[5],(posx,posy))
 	return posx,posy
 
 def apretar_mouse_juego_loop(mouspos):
 	return
 
-def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_personaje,enemigos_bliteados):
+def mover_personaje(pantalla,posx,posy,direX,direY,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes):
 	if aspect_ratio == '2':
 		if posx+direX<143 or posy+direY<-35 or posx+direX>893 or posy+direY>365:
 			return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,False,None
@@ -603,31 +687,30 @@ def mover_personaje(pantalla,clase,posx,posy,direX,direY,mapa,datos_mapa,datos_p
 	 	print language['lang_cell']+': '+celda_number
 	 	print 'posx:',posx+direX,' posy:',posy+direY
 
-	#subpantalla = pantalla.subsurface(posx,posy,30,60)
-	#pantalla.blit(subpantalla,(posx,posy))
-	blit_mapa(pantalla,mapa)
-	blitear_datos_mapa(pantalla,mapa,datos_mapa)
+	datos_personaje[6] = celda_number
+	blit_mapa(pantalla,datos_imagenes)
+	blitear_datos_mapa(pantalla,datos_mapa,datos_imagenes)
 	posx 		 += direX
 	posy 		 += direY
 	celda_number = get_celda_number(posx,posy)[0]
-	reblit_monster(pantalla,enemigos_bliteados)
-	blit_personaje_en_mapa(pantalla,clase,celda_number)
+	reblit_monster(pantalla,enemigos_bliteados,datos_imagenes)
+	blit_personaje_en_mapa(pantalla,datos_personaje,datos_imagenes)
 	pygame.display.flip()
 	colision_pj_mob,info_enemigo = colision_jugador_monster(posx,posy,enemigos_bliteados)
 	if colision_pj_mob and debug_mode:
 		print language['lang_pj_mob_same_cell']
 	if colision_pj_mob == False:
-		datos_personaje,datos_mapa,posx,posy,enemigos_bliteados = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,enemigos_bliteados)
+		datos_personaje,datos_mapa,posx,posy,enemigos_bliteados = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 	return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo
 
-def bliteo_salir_x(pantalla):
+def bliteo_salir_x(pantalla,datos_imagenes):
 	screenX = 0
 	screenY = 0
 	if aspect_ratio == '2':
 		screenX = 133
-	pop_up  = pygame.image.load(os.path.join("media","juego","salir.png")).convert()
-	pop_up.set_colorkey((255,255,255))
-	pantalla.blit(pop_up,(screenX,screenY))
+	#pop_up  = pygame.image.load(os.path.join("media","juego","salir.png")).convert()
+	#pop_up.set_colorkey((255,255,255))
+	pantalla.blit(datos_imagenes[6],(screenX,screenY))
 	return
 
 def guardar_datos_personaje(datos_personaje,posx,posy):
@@ -665,40 +748,17 @@ def guardar_datos_personaje(datos_personaje,posx,posy):
 		print language['lang_saving_successful']
 	return
 
-def blitear_datos_mapa(pantalla,mapa,datos_mapa):
-	for celdas in datos_mapa:
-		if celdas<='264':
-			posx,posy = get_celdas_pos(celdas)
-			if aspect_ratio == '2':
-				posx += 133
-			estrella  = pygame.image.load(os.path.join("media","juego","estrella.png")).convert()
-			estrella.set_colorkey((255,255,255))
-			pantalla.blit(estrella,(posx,posy))
-
-		if debug_mode:
-			## blitear reestricciones de movimiento	
-			if celdas=='265':
-				celdas_bloquedas = datos_mapa[celdas].strip().split(';')
-				bloqued = pygame.image.load(os.path.join("media","juego","bloqued.png")).convert()
-				bloqued.set_colorkey((255,255,255))
-				for n_celda_bloqueda in celdas_bloquedas:
-					posx,posy = get_celdas_pos(n_celda_bloqueda)
-					if aspect_ratio == '2':
-						posx += 133
-					pantalla.blit(bloqued,(posx,posy))
-	return
-
-def blit_pausa(pantalla):
+def blit_pausa(pantalla,datos_imagenes):
 	screenX = 0
 	screenY = 0
 	if aspect_ratio == '2':
 		screenX = 133
-	pausa   = pygame.image.load(os.path.join("media","juego","pausa.png")).convert()
-	pausa.set_colorkey((255,255,255))
-	pantalla.blit(pausa,(screenX,screenY))
+	#pausa   = pygame.image.load(os.path.join("media","juego","pausa.png")).convert()
+	#pausa.set_colorkey((255,255,255))
+	pantalla.blit(datos_imagenes[9],(screenX,screenY))
 	return
 
-def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta,enemigos_bliteados):
+def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta,enemigos_bliteados,datos_imagenes):
 	pausa 	   				= True
 	juego_loop 				= True
 	character_selector_menu = True
@@ -707,11 +767,11 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 	if aspect_ratio == '2':
 		mouseposX = 133
 	if (285+mouseposX<mouspos[0]<513+mouseposX) and (121+mouseposY<mouspos[1]<163+mouseposY): #reanudar
-		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)							
+		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (168+mouseposY<mouspos[1]<210+mouseposY): #guardar datos
 		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
-		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posicionX,posicionY,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)							
+		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (213+mouseposY<mouspos[1]<255+mouseposY): #opciones
 		pass
@@ -730,7 +790,7 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 
 	return posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu
 
-def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados,pelea):
+def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes):
 	character_selector_menu = True
 	juego_loop 				= True
 	cerrar 					= True
@@ -754,16 +814,16 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 				elif (441+mouseposX<mouspos[0]<580+mouseposX)and (209+mouseposY<mouspos[1]<320+mouseposY):
 					cerrar = False
 					pausa  = False
-					posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
+					posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posx,posy,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
 		elif event.type == pygame.KEYDOWN: ##apretar boton
 			if event.key == pygame.K_ESCAPE: 
 				cerrar = False
-				posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,datos_personaje[1],posx,posy,0,0,datos_personaje[5],datos_mapa,datos_personaje,enemigos_bliteados)
+				posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posx,posy,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 				return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
 	return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea 
 
-def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigos_bliteados):
+def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes):
 	#print datos_mapa
 	for celdas in datos_mapa:
 		if celdas<='264':
@@ -777,14 +837,17 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				datos_celda			= datos_mapa[celdas].split(';')
 				nueva_celda         = datos_celda[1]
 				datos_personaje[5]  = datos_celda[0]
+				datos_personaje[6]  = nueva_celda
 				if debug_mode:
 					print language['lang_map']+': '+datos_personaje[5]
-				datos_mapa          = blit_mapa(pantalla,datos_personaje[5])
-				blit_laterales_mapas(pantalla,datos_mapa)
-				blitear_datos_mapa(pantalla,datos_personaje[5],datos_mapa)
-				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje[1],nueva_celda)
+				datos_mapa     = get_datos_mapa(datos_personaje)
+				datos_imagenes = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa)
+				blit_mapa(pantalla,datos_imagenes)
+				blit_laterales_mapas(pantalla,datos_mapa,datos_imagenes)
+				blitear_datos_mapa(pantalla,datos_mapa,datos_imagenes)
+				posicionX,posicionY = blit_personaje_en_mapa(pantalla,datos_personaje,datos_imagenes)
 				if '280' in datos_mapa:
-					enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY)
+					enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes)
 				else:
 					enemigos_bliteados = []
 				return datos_personaje,datos_mapa,posicionX,posicionY,enemigos_bliteados
@@ -801,7 +864,7 @@ def blit_cargando(pantalla): #terminar
 	pygame.display.flip()
 	return
 
-def blit_monster(pantalla,datos_mapa,posicionX,posicionY):
+def blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes):
 	enemigos_bliteados = []
 	celdas_bloquedas   = []
 	celda_jugador = get_celda_number(posicionX,posicionY)[0]
@@ -818,6 +881,8 @@ def blit_monster(pantalla,datos_mapa,posicionX,posicionY):
 		celdas_bloquedas.append(celda_aparicion)
 	celdas_bloquedas.append(celda_jugador)
 	lista_enemigos = datos_mapa['280'].strip().split(';')
+	contador_mob = 0
+	imagenes_enemigos = datos_imagenes[10]
 	for id_enemigo in lista_enemigos:
 		try:
 			celda_enemigo = str(random.randint(0,263))
@@ -830,25 +895,30 @@ def blit_monster(pantalla,datos_mapa,posicionX,posicionY):
 			posx,posy = get_celdas_pos(celda_enemigo)
 			if aspect_ratio == '2':
 				posx += 133
-			enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
-			enemigo.set_colorkey((255,255,255))
-			pantalla.blit(enemigo,(posx,posy))
+			#enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
+			#enemigo.set_colorkey((255,255,255))
+			pantalla.blit(imagenes_enemigos[contador_mob][0],(posx,posy))
 			enemigos_bliteados.append((celda_enemigo,id_enemigo))
 			celdas_bloquedas.append(celda_enemigo)
+			contador_mob += 1
 		except:
 			pass
 	if debug_mode:
-		print language['lang_blitted_mobs']+': '+enemigos_bliteados
+		print language['lang_blitted_mobs']+':'
+		print enemigos_bliteados
 	return enemigos_bliteados
 
-def reblit_monster(pantalla,enemigos_bliteados):
+def reblit_monster(pantalla,enemigos_bliteados,datos_imagenes):
+	contador_mob = 0
+	imagenes_enemigos = datos_imagenes[10]
 	for celda_enemigo,id_enemigo in enemigos_bliteados:
 		posx,posy = get_celdas_pos(celda_enemigo)
 		if aspect_ratio == '2':
 			posx += 133
-		enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+id_enemigo+".png")).convert()
-		enemigo.set_colorkey((255,255,255))
-		pantalla.blit(enemigo,(posx,posy))
+		for alf in imagenes_enemigos:
+			if id_enemigo == alf[1]:
+				pantalla.blit(alf[0],(posx,posy))
+		contador_mob += 1
 	return
 
 def mover_monster(pantalla,enemigos_bliteados,datos_mapa): 
@@ -890,88 +960,78 @@ def colision_jugador_monster(posx,posy,enemigos_bliteados):
 			return True,enemigo
 	return False,None
 
-def animacion_pantalla(pantalla,mapa,screenX,screenY,clase,info_enemigo,datos_mapa,animacion_number):
+def animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacion_number,datos_imagenes):
 	#animacion_number = 2
-	try:
-		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa"+mapa+".png")).convert()
-	except:
-		mapa_image = pygame.image.load(os.path.join("media","mapas","mapa0000.png")).convert()
-		mapa = '0000'
-
-	datos_mapa      = dict()
-	try:
-		file_datos_mapa = open('media\mapas\mapa'+mapa+'.dat')
-		for linea in file_datos_mapa:
-			datos_mapa[linea.strip().split(' = ')[0]] = linea.strip().split(' = ')[1]
-		file_datos_mapa.close()
-	except:
-		pass
-
-	negro = pygame.image.load(os.path.join("media","negro.png")).convert()
-	pantalla.blit(negro,(0,0))
-
+	pantalla.blit(datos_imagenes[11],(0,0))
 	if animacion_number == 1:
 		if aspect_ratio == '2':
-			screenY += 18
+			valor = int(2*(120.0/FPS))
+			if valor < 1:
+				valor = 1
+			screenY += valor
 		else:
-			screenY += 11
-
+			valor = int(2*(120.0/FPS))
+			if valor < 1:
+				valor = 1
+			screenY += valor
 	elif animacion_number == 2:
-		screenX -= 16
+		valor = int(3*(120.0/FPS))
+		if valor < 1:
+			valor = 1
+		screenX -= valor
 		if aspect_ratio == '2':
-			screenY += 18
+			valor = int(4*(120.0/FPS))
+			if valor < 1:
+				valor = 1
+			screenY += valor
 		else:
-			screenY += 10
+			valor = int(2*(120.0/FPS))
+			if valor < 1:
+				valor = 1
+			screenY += int(2*(120.0/FPS))
 
 	if aspect_ratio == '2':
-		pantalla.blit(negro,(600,0))
-		cuadricula_lateral = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
-		cuadricula_lateral.set_colorkey((255,255,255))
-		lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
-		if '272' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
-			pantalla.blit(mapa_lateral,(-800+screenX,448+screenY))
-			pantalla.blit(cuadricula_lateral,(-800+screenX,450+screenY))
+		datos_lateral = datos_imagenes[3]
+		pantalla.blit(datos_imagenes[11],(600,0))
+		#cuadricula_lateral = pygame.image.load(os.path.join("media","mapas","predef2.png")).convert()
+		#cuadricula_lateral.set_colorkey((255,255,255))
+		#lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png")).convert()
+		if '272' in datos_mapa:
+			#mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['272']+".png")).convert()
+			pantalla.blit(datos_lateral[0],(-800+screenX,448+screenY))
+			pantalla.blit(datos_imagenes[4],(-800+screenX,450+screenY))
 		else:
-			pantalla.blit(lateral,(-133+screenX,448+screenY))
+			pantalla.blit(datos_lateral[0],(-133+screenX,448+screenY))
 		if '273' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
-			pantalla.blit(mapa_lateral,(800+screenX,448+screenY))
-			pantalla.blit(cuadricula_lateral,(800+screenX,450+screenY))
+			#mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['273']+".png")).convert()
+			pantalla.blit(datos_lateral[1],(800+screenX,448+screenY))
+			pantalla.blit(datos_imagenes[4],(800+screenX,450+screenY))
 		else:
-			pantalla.blit(lateral,(800+screenX,448+screenY))
+			pantalla.blit(datos_lateral[1],(800+screenX,448+screenY))
 		if '270' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
-			pantalla.blit(mapa_lateral,(-800+screenX,0+screenY))
-			pantalla.blit(cuadricula_lateral,(-800+screenX,0+screenY))
+			#mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['270']+".png")).convert()
+			pantalla.blit(datos_lateral[2],(-800+screenX,0+screenY))
+			pantalla.blit(datos_imagenes[4],(-800+screenX,0+screenY))
 		else:
-			pantalla.blit(lateral,(-133+screenX,0+screenY))
+			pantalla.blit(datos_lateral[2],(-133+screenX,0+screenY))
 		if '271' in  datos_mapa:
-			mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
-			pantalla.blit(mapa_lateral,(800+screenX,0+screenY))
-			pantalla.blit(cuadricula_lateral,(800+screenX,0+screenY))
+			#mapa_lateral = pygame.image.load(os.path.join("media","mapas","mapa"+datos_mapa['271']+".png")).convert()
+			pantalla.blit(datos_lateral[3],(800+screenX,0+screenY))
+			pantalla.blit(datos_imagenes[4],(800+screenX,0+screenY))
 		else:
-			pantalla.blit(lateral,(800+screenX,0+screenY))
+			pantalla.blit(datos_lateral[3],(800+screenX,0+screenY))
 
-	pre_def_hud = pygame.image.load(os.path.join("media","juego","hud.png")).convert()
-	pre_def_hud.set_colorkey((255,255,255))
-	pantalla.blit(pre_def_hud,(screenX,screenY))
+	pantalla.blit(datos_imagenes[0],(screenX,screenY))
+	pantalla.blit(datos_imagenes[1],(screenX,screenY))
+	pantalla.blit(datos_imagenes[2],(screenX,screenY))
 
-	pantalla.blit(mapa_image,(screenX,screenY))
-	cuadricula = pygame.image.load(os.path.join("media","mapas","predef.png")).convert()
-	cuadricula.set_colorkey((255,255,255))
-	pantalla.blit(cuadricula,(screenX,screenY))
-
-	personajerl = pygame.image.load(os.path.join("media","clases","class_"+clase+".png")).convert()
-	personajerl = pygame.transform.scale(personajerl,(30,60))
-	personajerl.set_colorkey((255,255,255))
 	enemigo   = pygame.image.load(os.path.join("media","monsters","monster"+info_enemigo[1]+".png")).convert()
 	enemigo.set_colorkey((255,255,255))
 	posx,posy = get_celdas_pos(info_enemigo[0])
 	posx += screenX
 	posy += screenY
 	pantalla.blit(enemigo,(posx,posy))
-	pantalla.blit(personajerl,(posx,posy))
+	pantalla.blit(datos_imagenes[5],(posx,posy))
 
 	if screenY > 600:
 		if aspect_ratio == '2':
@@ -980,15 +1040,14 @@ def animacion_pantalla(pantalla,mapa,screenX,screenY,clase,info_enemigo,datos_ma
 
 	return screenX,screenY,True,animacion_number
 
-def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje):
+def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje,datos_imagenes):##terminar
 	celdas_peleas = datos_mapa['266'].strip().split(';')
-
 	celda_pj = random.choice(celdas_peleas)
 	posx_pj,posy_pj = get_celdas_pos(celda_pj)
 	celdas_peleas.remove(celda_pj)
-	personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
-	personajerl = pygame.transform.scale(personajerl,(30,60))
-	personajerl.set_colorkey((255,255,255))
+	#personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+	#personajerl = pygame.transform.scale(personajerl,(30,60))
+	#personajerl.set_colorkey((255,255,255))
 
 	celda_mob = random.choice(celdas_peleas)
 	posx_mob,posy_mob = get_celdas_pos(celda_mob)
@@ -998,14 +1057,14 @@ def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje):
 	if aspect_ratio == '2':
 		posx_pj  += 133
 		posx_mob += 133
-	pantalla.blit(personajerl,(posx_pj,posy_pj))
+	pantalla.blit(datos_imagenes[5],(posx_pj,posy_pj))
 	pantalla.blit(enemigorl,(posx_mob,posy_mob))
 	return celda_pj,celda_mob
 
 def apretar_mouse_pelea(mouspos):
 	return
 
-def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos_mapa,celda_mob_pelea,id_mob):
+def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos_mapa,celda_mob_pelea,id_mob,datos_imagenes):
 	if aspect_ratio == '2':
 		posx_pj += 133
 	celda_jugador = get_celda_number(posx_pj,posy_pj)[0]
@@ -1025,8 +1084,7 @@ def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos
 	if celda_number in celdas_bloquedas:
 		return celda_jugador
 
-	if aspect_ratio == '2':
-		blit_laterales_mapas(pantalla,datos_mapa)
+	blit_laterales_mapas(pantalla,datos_mapa,datos_imagenes)
 	posx_pj += direX
 	posy_pj += direY
 
@@ -1034,14 +1092,14 @@ def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos
 	 	print language['lang_cell']+': '+get_celda_number(posx_pj,posy_pj)[0]
 	 	print 'posx:',posx_pj,' posy:',posy_pj
 
-	personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
-	personajerl = pygame.transform.scale(personajerl,(30,60))
-	personajerl.set_colorkey((255,255,255))
-	blit_mapa(pantalla,datos_personaje[5])
+	#personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+	#personajerl = pygame.transform.scale(personajerl,(30,60))
+	#personajerl.set_colorkey((255,255,255))
+	blit_mapa(pantalla,datos_imagenes)
 
 	info_enemigo = (celda_mob_pelea,id_mob)
-	reblit_monster(pantalla,[info_enemigo])
-	pantalla.blit(personajerl,(posx_pj,posy_pj))
+	reblit_monster(pantalla,[info_enemigo],datos_imagenes)
+	pantalla.blit(datos_imagenes[5],(posx_pj,posy_pj))
 	pygame.display.flip()
 
 	celda_jugador = get_celda_number(posx_pj,posy_pj)[0]

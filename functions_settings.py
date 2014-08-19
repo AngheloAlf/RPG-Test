@@ -54,7 +54,12 @@ def get_languange():
 
 def get_settings_resolution():
 	settings = abrir_settings()
-	if get_settings_aspect_ratio() == '2':
+	if get_settings_aspect_ratio() == '0':
+		alf = settings['resolution'].split('x')
+		alf = map(int,alf)
+		alf = tuple(alf)
+		return alf
+	elif get_settings_aspect_ratio() == '2':
 		if settings['resolution'] == '1066x600':
 			return (1066,600)
 		if settings['resolution'] == '800x600':
@@ -65,3 +70,14 @@ def get_settings_resolution():
 		if settings['resolution'] == '1066x600':
 			return (800,600)
 	return (800,600)
+
+def get_multiplicator_resolution():
+	aspect_ratio = get_settings_aspect_ratio()
+	resolution   = get_settings_resolution()
+	if aspect_ratio == '0':
+		return resolution[1]/600.0
+	if aspect_ratio == '1':
+		return resolution[1]/600.0
+	elif aspect_ratio == '2':
+		return resolution[1]/600.0
+	return 1.0
