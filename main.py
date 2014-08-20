@@ -137,7 +137,6 @@ while hacer:
 		datos_imagenes			= None
 
 		personajes_cuenta = blit_selec_pers(pantalla,user)
-		lista_id_clases = id_clases()
 		
 		pygame.mixer.init(44100)
 		main_dir 			= os.path.split(os.path.abspath(__file__))[0]
@@ -157,6 +156,7 @@ while hacer:
 
 			mouspos = pygame.mouse.get_pos()
 			for event in pygame.event.get():
+				
 				if event.type == pygame.QUIT:
 					character_selector_menu = False
 					print language['lang_log_out']
@@ -166,6 +166,7 @@ while hacer:
 						character_selector_menu = False
 						print language['lang_log_out']
 						break
+					#if event.key == pygame.K_p:
 		            #if event.key == pygame.K_d: letra d teclado
 		            #if event.key == pygame.K_a: letra a teclado
 		            #if event.key == pygame.K_w: letra w teclado
@@ -203,7 +204,7 @@ while hacer:
 
 					elif event.type == pygame.MOUSEBUTTONDOWN:
 						if pygame.mouse.get_pressed()[0]==True:
-							personajes_cuenta,class_selected,character_creator_menu,character_selector_menu = apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_id_clases,personajes_cuenta)
+							personajes_cuenta,class_selected,character_creator_menu,character_selector_menu = apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,personajes_cuenta)
 							
 				pygame.display.flip()
 

@@ -1,7 +1,7 @@
 #id_cuenta;nombre_cuenta;contrasena;personajes
-1;ALF;anghelo95;1,2,3,0,0
+1;ALF;anghelo95;1,2,3,4,5
 2;Fla;flan de cocholate;0,0,0,0,0
-3;ADMIN;ADMIN;0,0,0,0,0
+3;ADMIN;ADMIN;7,8,9,10,11
 4;olakase;olakase;0,0,0,0,0
-5;pico;pico;0,0,0,0,0
+5;pico;pico;12,0,0,0,0
 6;TEST;TEST;0,0,8,0,0

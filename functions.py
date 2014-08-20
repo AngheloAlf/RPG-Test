@@ -14,14 +14,14 @@ FPS 		    = get_settings_FPS()
 def blit_selec_pers(pantalla,user): 
 	seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png"))
 	seleccion_personajes = pygame.transform.scale(seleccion_personajes,(int(800*mult_resolution),int(600*mult_resolution)))
-	lista    		= []
-	screenX 		= 0
-	screenY 		= 0
-	posx_character 	= 53
-	posy_character 	= 173
-	posx 			= 45
-	posy 			= 140
-	contador_fuente = 0
+	lista    			 = []
+	screenX 			 = 0
+	screenY 			 = 0
+	posx_character 		 = 53
+	posy_character 		 = 173
+	posx 				 = 45
+	posy 				 = 140
+	contador_fuente 	 = 0
 	if aspect_ratio=='2':
 		screenX 		= 133
 		posx_character  = 186
@@ -134,7 +134,7 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 		else:
 			print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 
-	if (626+mouseposX<mouspos[0]<794+mouseposX)and (560+mouseposY<mouspos[1]<594+mouseposY):
+	if (626+mouseposX<mouspos[0]<794+mouseposX)and (511+mouseposY<mouspos[1]<555+mouseposY):
 		if character_selected == '0':
 			print language['lang_select_a_character']
 		else:								#pass
@@ -151,16 +151,19 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 				enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes)
 	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados,datos_imagenes
 
-def id_clases():
-	lista_clases = []
+def get_datos_clases(): # id_clases():
+	datos_clases    = dict()
+	lista_id_clases = list()
 	arch_clases = open('clases.dat')
 	for linea in arch_clases:
-		numero_clase = linea.strip().split(';')[0]
-		if numero_clase == '#id_clase':
+		datos = linea.strip().split(';')
+		id_clase = datos[0]
+		if id_clase == '#id_clase':
 			continue
-		lista_clases.append(numero_clase)
+		lista_id_clases.append(id_clase)
+		datos_clases[id_clase] = datos
 	arch_clases.close()
-	return lista_clases
+	return lista_id_clases,datos_clases
 
 def blit_creac_pers(pantalla):
 	screenX  = 0
@@ -178,9 +181,9 @@ def blit_creac_pers(pantalla):
 	creacion_personaje 	= pygame.image.load(os.path.join("media","menu","creacion_personaje.png"))
 	creacion_personaje  = pygame.transform.scale(creacion_personaje,(int(800*mult_resolution),int(600*mult_resolution)))
 	pantalla.blit(creacion_personaje,(screenX,screenY))
-	lista_clases = id_clases()
+	lista_id_clases,datos_clases = get_datos_clases()
 
-	for bliteamiento in lista_clases:
+	for bliteamiento in lista_id_clases:
 		contador += 1
 		class_icon	= pygame.image.load(os.path.join("media","menu","class_"+bliteamiento+"_icon.png")).convert()
 		class_icon  = pygame.transform.scale(class_icon,(int(54*mult_resolution),int(54*mult_resolution)))
@@ -196,8 +199,9 @@ def blit_creac_pers(pantalla):
 	return
 
 def blit_perso_selec_creacion(class_selected,pantalla):
-	screenX = 353
-	screenY = 217
+	datos_clase = get_datos_clases()[1][class_selected]
+	screenX  	= 353
+	screenY 	= 217
 	if aspect_ratio == '2':
 		screenX = 486
 	blit_creac_pers(pantalla)
@@ -205,15 +209,18 @@ def blit_perso_selec_creacion(class_selected,pantalla):
 	character_class  = pygame.transform.scale(character_class,(int(115*mult_resolution),int(295*mult_resolution)))
 	character_class.set_colorkey((255,255,255))
 	pantalla.blit(character_class,(screenX,screenY))
+	nombre_clase_render = fuente.render(datos_clase[1], True, (0,0,255))
+	pantalla.blit(nombre_clase_render,(310,550))
 	return
 
-def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_id_clases,personajes_cuenta):
-	character_selector_menu = True
-	character_creator_menu  = True
-	mouseposX				= 0
-	mouseposY				= 0
-	Xnombre					= 0
-	Ynombre 				= 0
+def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,personajes_cuenta):
+	character_selector_menu  	 = True
+	character_creator_menu  	 = True
+	mouseposX				     = 0
+	mouseposY					 = 0
+	Xnombre						 = 0
+	Ynombre 					 = 0
+	lista_id_clases,datos_clase  = get_datos_clases()
 
 	if aspect_ratio=='2':
 		mouseposX = 133
@@ -297,7 +304,7 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_i
 			mensaje_nombre.set_colorkey((255,255,255))
 			pantalla.blit(mensaje_nombre,(Xnombre,Ynombre))
 			pygame.display.flip()
-			crear_personaje(user,class_selected)
+			crear_personaje(pantalla,user,class_selected)
 			character_creator_menu = False
 			personajes_cuenta = blit_selec_pers(pantalla,user)
 		else:
@@ -305,32 +312,194 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,lista_i
 
 	return personajes_cuenta,class_selected,character_creator_menu,character_selector_menu
 
-def crear_personaje(user,class_selected):
+def escribir_nombre(pantalla,lista_nombres,class_selected):
+	nombre_personaje_creado = ''
+	escribir    = True
+	escribiendo = True
+	verificador = True
+	Xnombre     = 0
+	Ynombre 	= 0
+	if aspect_ratio == '2':
+		Xnombre = 133
+	mensaje_nombre = pygame.image.load(os.path.join("media","menu","mensaje_nombre.png")).convert()
+	mensaje_nombre.set_colorkey((255,255,255))
+	while escribir:
+		escribiendo = True
+		verificador = True
+		blit_creac_pers(pantalla)
+		blit_perso_selec_creacion(class_selected,pantalla)
+		pantalla.blit(mensaje_nombre,(Xnombre,Ynombre))
+		while escribiendo:
+			for event in pygame.event.get():
+				if event.type == pygame.KEYDOWN: 
+					if event.key == pygame.K_RETURN:
+						escribiendo = False
+					elif event.key == pygame.K_BACKSPACE:
+						if nombre_personaje_creado != '':
+							nombre_personaje_creado = nombre_personaje_creado[:-1]
+							blit_creac_pers(pantalla)
+							blit_perso_selec_creacion(class_selected,pantalla)
+							pantalla.blit(mensaje_nombre,(Xnombre,Ynombre))
+					mods = pygame.key.get_mods()
+					if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
+						if event.key == pygame.K_q:
+							nombre_personaje_creado += 'Q'
+						elif event.key == pygame.K_w:
+							nombre_personaje_creado += 'W'
+						elif event.key == pygame.K_e:
+							nombre_personaje_creado += 'E'
+						elif event.key == pygame.K_r:
+							nombre_personaje_creado += 'R'
+						elif event.key == pygame.K_t:
+							nombre_personaje_creado += 'T'
+						elif event.key == pygame.K_y:
+							nombre_personaje_creado += 'Y'
+						elif event.key == pygame.K_u:
+							nombre_personaje_creado += 'U'
+						elif event.key == pygame.K_i:
+							nombre_personaje_creado += 'I'
+						elif event.key == pygame.K_o:
+							nombre_personaje_creado += 'O'
+						elif event.key == pygame.K_p:
+							nombre_personaje_creado += 'P'
+						elif event.key == pygame.K_a:
+							nombre_personaje_creado += 'A'
+						elif event.key == pygame.K_s:
+							nombre_personaje_creado += 'S'
+						elif event.key == pygame.K_d:
+							nombre_personaje_creado += 'D'
+						elif event.key == pygame.K_f:
+							nombre_personaje_creado += 'F'
+						elif event.key == pygame.K_g:
+							nombre_personaje_creado += 'G'
+						elif event.key == pygame.K_h:
+							nombre_personaje_creado += 'H'
+						elif event.key == pygame.K_j:
+							nombre_personaje_creado += 'J'
+						elif event.key == pygame.K_k:
+							nombre_personaje_creado += 'K'
+						elif event.key == pygame.K_l:
+							nombre_personaje_creado += 'L'
+						elif event.key == pygame.K_z:
+							nombre_personaje_creado += 'Z'
+						elif event.key == pygame.K_x:
+							nombre_personaje_creado += 'X'
+						elif event.key == pygame.K_c:
+							nombre_personaje_creado += 'C'
+						elif event.key == pygame.K_v:
+							nombre_personaje_creado += 'V'
+						elif event.key == pygame.K_b:
+							nombre_personaje_creado += 'B'
+						elif event.key == pygame.K_n:
+							nombre_personaje_creado += 'N'
+						elif event.key == pygame.K_m:
+							nombre_personaje_creado += 'M'
+					else:
+						if event.key == pygame.K_q:
+							nombre_personaje_creado += 'q'
+						elif event.key == pygame.K_w:
+							nombre_personaje_creado += 'w'
+						elif event.key == pygame.K_e:
+							nombre_personaje_creado += 'e'
+						elif event.key == pygame.K_r:
+							nombre_personaje_creado += 'r'
+						elif event.key == pygame.K_t:
+							nombre_personaje_creado += 't'
+						elif event.key == pygame.K_y:
+							nombre_personaje_creado += 'y'
+						elif event.key == pygame.K_u:
+							nombre_personaje_creado += 'u'
+						elif event.key == pygame.K_i:
+							nombre_personaje_creado += 'i'
+						elif event.key == pygame.K_o:
+							nombre_personaje_creado += 'o'
+						elif event.key == pygame.K_p:
+							nombre_personaje_creado += 'p'
+						elif event.key == pygame.K_a:
+							nombre_personaje_creado += 'a'
+						elif event.key == pygame.K_s:
+							nombre_personaje_creado += 's'
+						elif event.key == pygame.K_d:
+							nombre_personaje_creado += 'd'
+						elif event.key == pygame.K_f:
+							nombre_personaje_creado += 'f'
+						elif event.key == pygame.K_g:
+							nombre_personaje_creado += 'g'
+						elif event.key == pygame.K_h:
+							nombre_personaje_creado += 'h'
+						elif event.key == pygame.K_j:
+							nombre_personaje_creado += 'j'
+						elif event.key == pygame.K_k:
+							nombre_personaje_creado += 'k'
+						elif event.key == pygame.K_l:
+							nombre_personaje_creado += 'l'
+						elif event.key == pygame.K_z:
+							nombre_personaje_creado += 'z'
+						elif event.key == pygame.K_x:
+							nombre_personaje_creado += 'x'
+						elif event.key == pygame.K_c:
+							nombre_personaje_creado += 'c'
+						elif event.key == pygame.K_v:
+							nombre_personaje_creado += 'v'
+						elif event.key == pygame.K_b:
+							nombre_personaje_creado += 'b'
+						elif event.key == pygame.K_n:
+							nombre_personaje_creado += 'n'
+						elif event.key == pygame.K_m:
+							nombre_personaje_creado += 'm'
+					if event.key == pygame.K_SPACE:
+						nombre_personaje_creado += ' '
+					elif event.key == pygame.K_PERIOD:
+						nombre_personaje_creado += '.'
+						
+			nombre_personaje_render = fuente.render(nombre_personaje_creado, True, (0,0,255))
+			pantalla.blit(nombre_personaje_render,(320,490))
+			pygame.display.flip()
+		while verificador:
+			if len(nombre_personaje_creado)<3:
+				print language['lang_name_too_short']
+				escribiendo = True
+				nombre_personaje_creado = ''
+			if nombre_personaje_creado in lista_nombres:
+				print language['lang_name_already_exist']
+				escribiendo = True
+				nombre_personaje_creado = ''
+			if len(nombre_personaje_creado)>10:
+				print language['lang_name_too_long']
+				escribiendo = True
+				nombre_personaje_creado = ''
+			if escribiendo == False:
+				escribir    = False
+			verificador = False
+	return nombre_personaje_creado
+
+def crear_personaje(pantalla,user,class_selected):
 	file_personajes = open('personajes.dat')
 	lista_nombres   = []
 	for linea_personajes in file_personajes:
 		if linea_personajes.split(';')[0] == '#id_personaje':
 			continue
 		id_personaje = linea_personajes.strip().split(';')[0]
-		lista_nombres.append(linea_personajes.strip().split(';')[2])
+		lista_nombres.append(linea_personajes.strip().split(';')[2].lower())
 	file_personajes.close()
 
 	verificar_nombre     = True
 	contador_verificador = 0
-	nombre_personaje_creado = raw_input(language['lang_char_name']+': ')
-	while verificar_nombre:
-		contador_verificador += 1
-		while nombre_personaje_creado in lista_nombres:
-			nombre_personaje_creado = raw_input(language['lang_name_already_exist']+': ')
-			contador_verificador = 0
-		while  len(nombre_personaje_creado)>10:
-			nombre_personaje_creado = raw_input(language['lang_name_too_long']+': ')
-			contador_verificador = 0
-		while  len(nombre_personaje_creado)<3:
-			nombre_personaje_creado = raw_input(language['lang_name_too_short']+': ')
-			contador_verificador = 0
-		if contador_verificador == 5:
-			verificar_nombre = False
+	nombre_personaje_creado = escribir_nombre(pantalla,lista_nombres,class_selected)
+	#nombre_personaje_creado = raw_input(language['lang_char_name']+': ')
+	# while verificar_nombre:
+	# 	contador_verificador += 1
+	# 	while nombre_personaje_creado in lista_nombres:
+	# 		nombre_personaje_creado = raw_input(language['lang_name_already_exist']+': ')
+	# 		contador_verificador = 0
+	# 	while  len(nombre_personaje_creado)>10:
+	# 		nombre_personaje_creado = raw_input(language['lang_name_too_long']+': ')
+	# 		contador_verificador = 0
+	# 	while  len(nombre_personaje_creado)<3:
+	# 		nombre_personaje_creado = raw_input(language['lang_name_too_short']+': ')
+	# 		contador_verificador = 0
+	# 	if contador_verificador == 5:
+	# 		verificar_nombre = False
 
 
 	file_account = open('accounts.dat')
@@ -359,7 +528,7 @@ def crear_personaje(user,class_selected):
 			lista.append(iteracion)
 
 
-	lista[4] = lista[4]+'\n'
+	lista[-1] = lista[-1]+'\n'
 	datos_cuenta[3] = ','.join(lista)
 	datos_cuenta_modificados = ';'.join(datos_cuenta)
 
