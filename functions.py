@@ -74,6 +74,14 @@ def blit_selec_pers(pantalla,user):
 				posy = 482
 		except:
 			break
+	bienvenido_render = fuente_titulo.render(language['lang_welcome_char_selector'], True, (0,0,255))
+	pantalla.blit(bienvenido_render,(218,47))
+	cerrar_sesion_render = fuente_botones.render(language['lang_close_session'], True, (239,228,176))
+	pantalla.blit(cerrar_sesion_render,(650,6))
+	seleccionar_render = fuente_botones.render(language['lang_select_botton'], True, (237,28,36))
+	pantalla.blit(seleccionar_render,(638,518))
+	boton_crear_render = fuente_bonito.render(language['lang_make_char_botton'], True, (136,0,21))
+	pantalla.blit(boton_crear_render,(54,516))
 
 	return personajes_cuenta
 
@@ -140,7 +148,7 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 		else:								#pass
 			datos_personaje = datos_personaje_seleccionado(character_selected)
 			datos_mapa      = get_datos_mapa(datos_personaje)
-			datos_imagenes  = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa)
+			datos_imagenes  = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa,True)
 			juego_loop      = True
 			blit_hud_juego(pantalla,datos_imagenes)
 			blit_laterales_mapas(pantalla,datos_mapa,datos_imagenes)
@@ -182,6 +190,17 @@ def blit_creac_pers(pantalla):
 	creacion_personaje  = pygame.transform.scale(creacion_personaje,(int(800*mult_resolution),int(600*mult_resolution)))
 	pantalla.blit(creacion_personaje,(screenX,screenY))
 	lista_id_clases,datos_clases = get_datos_clases()
+
+	boton_creacion_de = fuente_titulo.render(language['lang_creation_of'], True, (63,72,204))
+	pantalla.blit(boton_creacion_de,(194,30))
+	boton_personajes = fuente_titulo.render(language['lang_characters'], True, (63,72,204))
+	pantalla.blit(boton_personajes,(196,100))
+	boton_crear = fuente_botones_g.render(language['lang_make_botton'], True, (255,174,201))
+	pantalla.blit(boton_crear,(707,549))
+	cerrar_sesion_render = fuente_botones.render(language['lang_close_session'], True, (239,228,176))
+	pantalla.blit(cerrar_sesion_render,(650,6))
+	volver_render = fuente_botones_g.render(language['lang_back'], True, (153,217,234))
+	pantalla.blit(volver_render,(5,2))
 
 	for bliteamiento in lista_id_clases:
 		contador += 1
@@ -300,9 +319,6 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,persona
 		if class_selected == '0':
 			print language['lang_select_a_class']
 		elif '0' in personajes_cuenta:
-			mensaje_nombre = pygame.image.load(os.path.join("media","menu","mensaje_nombre.png")).convert()
-			mensaje_nombre.set_colorkey((255,255,255))
-			pantalla.blit(mensaje_nombre,(Xnombre,Ynombre))
 			pygame.display.flip()
 			crear_personaje(pantalla,user,class_selected)
 			character_creator_menu = False
@@ -323,12 +339,18 @@ def escribir_nombre(pantalla,lista_nombres,class_selected):
 		Xnombre = 133
 	mensaje_nombre = pygame.image.load(os.path.join("media","menu","mensaje_nombre.png")).convert()
 	mensaje_nombre.set_colorkey((255,255,255))
+	escribe_el_render = fuente_botones_g.render(language['lang_write_the'], True, (185,122,87))
+	nombre_de_tu_render = fuente_botones_g.render(language['lang_name_of_your'], True, (185,122,87))
+	personaje_render = fuente_botones_g.render(language['lang_character'], True, (185,122,87))
 	while escribir:
 		escribiendo = True
 		verificador = True
 		blit_creac_pers(pantalla)
 		blit_perso_selec_creacion(class_selected,pantalla)
 		pantalla.blit(mensaje_nombre,(Xnombre,Ynombre))
+		pantalla.blit(escribe_el_render,(333,170))
+		pantalla.blit(nombre_de_tu_render,(333,220))
+		pantalla.blit(personaje_render,(335,275))
 		while escribiendo:
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN: 
@@ -340,6 +362,9 @@ def escribir_nombre(pantalla,lista_nombres,class_selected):
 							blit_creac_pers(pantalla)
 							blit_perso_selec_creacion(class_selected,pantalla)
 							pantalla.blit(mensaje_nombre,(Xnombre,Ynombre))
+							pantalla.blit(escribe_el_render,(333,170))
+							pantalla.blit(nombre_de_tu_render,(333,220))
+							pantalla.blit(personaje_render,(335,275))
 					mods = pygame.key.get_mods()
 					if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
 						if event.key == pygame.K_q:
@@ -451,9 +476,9 @@ def escribir_nombre(pantalla,lista_nombres,class_selected):
 						nombre_personaje_creado += ' '
 					elif event.key == pygame.K_PERIOD:
 						nombre_personaje_creado += '.'
-						
-			nombre_personaje_render = fuente.render(nombre_personaje_creado, True, (0,0,255))
-			pantalla.blit(nombre_personaje_render,(320,490))
+				nombre_personaje_render = fuente.render(nombre_personaje_creado, True, (0,0,255))
+				pantalla.blit(nombre_personaje_render,(320,490))		
+			
 			pygame.display.flip()
 		while verificador:
 			if len(nombre_personaje_creado)<3:
@@ -559,7 +584,7 @@ def get_datos_mapa(datos_personaje):
 		pass
 	return datos_mapa
 
-def importar_imagenes(datos_imagenes,datos_personaje,datos_mapa):
+def importar_imagenes(datos_imagenes,datos_personaje,datos_mapa,cambiar_personaje):
 	if datos_imagenes == None:
 		print language['lang_loading_images']
 		datos_lateral     = list()
@@ -676,6 +701,13 @@ def importar_imagenes(datos_imagenes,datos_personaje,datos_mapa):
 				enemigo   = pygame.transform.scale(enemigo,(int(30*mult_resolution),int(60*mult_resolution)))
 				enemigo.set_colorkey((255,255,255))
 				imagenes_enemigos.append((enemigo,id_enemigo))
+
+		if cambiar_personaje:
+			personajerl = pygame.image.load(os.path.join("media","clases","class_"+datos_personaje[1]+".png")).convert()
+			personajerl = pygame.transform.scale(personajerl,(int(30*mult_resolution),int(60*mult_resolution)))
+			personajerl.set_colorkey((255,255,255))
+			datos_imagenes[5] = personajerl
+
 
 		datos_imagenes[1]  = mapa_image
 		datos_imagenes[3]  = datos_lateral
@@ -857,6 +889,12 @@ def bliteo_salir_x(pantalla,datos_imagenes):
 	if aspect_ratio == '2':
 		screenX = 133
 	pantalla.blit(datos_imagenes[6],(screenX,screenY))
+	seguro_salir_render = fuente_botones_g.render(language['lang_sure_want_exit'], True, (185,122,87))
+	pantalla.blit(seguro_salir_render,(208,125))
+	si_render = fuente_botones_xl.render(language['lang_yes'], True, (185,122,87))
+	pantalla.blit(si_render,(230,218))
+	no_render = fuente_botones_xl.render(language['lang_no'], True, (185,122,87))
+	pantalla.blit(no_render,(475,218))
 	return
 
 def guardar_datos_personaje(datos_personaje,posx,posy):
@@ -900,6 +938,16 @@ def blit_pausa(pantalla,datos_imagenes):
 	if aspect_ratio == '2':
 		screenX = 133
 	pantalla.blit(datos_imagenes[9],(screenX,screenY))
+	reanudar_render = fuente_botones.render(language['lang_back_to_game_botton'], True, (127,127,127))
+	pantalla.blit(reanudar_render,(300,126))
+	reanudar_render = fuente_botones.render(language['lang_save_data'], True, (127,127,127))
+	pantalla.blit(reanudar_render,(295,173))
+	reanudar_render = fuente_botones.render(language['lang_options_botton'], True, (127,127,127))
+	pantalla.blit(reanudar_render,(295,215))
+	reanudar_render = fuente_botones.render(language['lang_change_of_character'], True, (127,127,127))
+	pantalla.blit(reanudar_render,(291,258))
+	reanudar_render = fuente_botones.render(language['lang_exit_botton'], True, (127,127,127))
+	pantalla.blit(reanudar_render,(296,301))
 	return
 
 def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta,enemigos_bliteados,datos_imagenes):
@@ -974,7 +1022,7 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				posx += 133
 			if posicionX == posx and posicionY == posy:
 				print language['lang_loading_map']
-				time.sleep(0.5)
+				#time.sleep(0.5)
 				datos_celda			= datos_mapa[celdas].split(';')
 				nueva_celda         = datos_celda[1]
 				datos_personaje[5]  = datos_celda[0]
@@ -982,7 +1030,7 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				if debug_mode:
 					print language['lang_map']+': '+datos_personaje[5]
 				datos_mapa     = get_datos_mapa(datos_personaje)
-				datos_imagenes = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa)
+				datos_imagenes = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa,False)
 				blit_mapa(pantalla,datos_imagenes)
 				blit_laterales_mapas(pantalla,datos_mapa,datos_imagenes)
 				blitear_datos_mapa(pantalla,datos_mapa,datos_imagenes)
