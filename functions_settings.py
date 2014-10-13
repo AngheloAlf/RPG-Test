@@ -42,11 +42,16 @@ def get_languange():
 	settings = abrir_settings()
 	idioma = settings['language']
 	lang = dict()
+
 	try:
-		file_lang = open('languages\lang_'+idioma+'.lang')
+		file_lang = open('languages/lang_'+idioma+'.lang')
 	except:
-		file_lang = open('languages\lang_es.lang')
 		print 'Error cargando archivo de idiomas, cargando el predeterminado'
+		try:
+			file_lang = open('languages/lang_es.lang')
+		except:
+			print 'Error cargando el archivo predeterminado'
+			return lang
 	for linea in file_lang:
 		alf = linea.strip().split(' = ')
 		lang[alf[0]] = alf[1]

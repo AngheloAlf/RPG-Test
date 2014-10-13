@@ -1,6 +1,9 @@
 from functions_settings import *
 language = get_languange()
-print language['lang_loading']
+try:
+	print language['lang_loading']
+except:
+	print 'lang_loading'
 import pygame, sys, os, random, math, time
 from pygame.locals import *
 from functions import *
@@ -13,7 +16,10 @@ hacer  		     = True
 sesion 		     = False
 crear_cuenta     = False
 oli              = False
-Titulo		     = language['lang_titulo']
+try:
+	Titulo       = language['lang_titulo']
+except:
+	Titulo       = 'lang_titulo'
 FPS 		     = get_settings_FPS()
 aspect_ratio     = get_settings_aspect_ratio()
 debug_mode   	 = get_settings_debug_mode()
@@ -22,17 +28,22 @@ show_FPS 		 = get_settings_show_FPS()
 resolution		 = get_settings_resolution()
 
 if debug_mode:
-	Titulo = '[DEBUG] | '+language['lang_titulo']
-	print language['lang_debug_on']
+	Titulo = '[DEBUG] | '+Titulo
+	procesar_idioma('lang_debug_on')
+	#print language['lang_debug_on']
 	print 'FPS:',FPS
 	if show_FPS:
-		print language['lang_show_fps_on']
+		procesar_idioma('lang_show_fps_on')
+		#print language['lang_show_fps_on']
 	if aspect_ratio=='2':
-		print language['lang_aspect_ratio_2']
+		procesar_idioma('lang_aspect_ratio_2')
+		#print language['lang_aspect_ratio_2']
 	else:
-		print language['lang_aspect_ratio_1']
+		procesar_idioma('lang_aspect_ratio_1')
+		#print language['lang_aspect_ratio_1']
 	if enable_busy_loop:
-		print language['lang_busy_loop_on']
+		procesar_idioma('lang_busy_loop_on')
+		#print language['lang_busy_loop_on']
 	print ''
 
 print language['lang_welcome']

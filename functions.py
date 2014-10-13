@@ -11,6 +11,21 @@ resolution  	= get_settings_resolution()
 mult_resolution = get_multiplicator_resolution()
 FPS 		    = get_settings_FPS()
 
+def procesar_idioma(palabra='Error',fuente_procesar=None):
+	if fuente_procesar == None:
+		try:
+			print language[palabra]
+		except:
+			print palabra
+		return None
+	else:
+		try:
+			return fuente_procesar.render(language[palabra], True, (0,0,255))
+		except:
+			palabra = '_'.join(palabra.split('_')[1:])
+			return fuente_procesar.render(palabra, True, (0,0,255))
+	return None
+
 def blit_selec_pers(pantalla,user): 
 	seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png"))
 	seleccion_personajes = pygame.transform.scale(seleccion_personajes,(int(800*mult_resolution),int(600*mult_resolution)))
@@ -74,13 +89,14 @@ def blit_selec_pers(pantalla,user):
 				posy = 482
 		except:
 			break
-	bienvenido_render = fuente_titulo.render(language['lang_welcome_char_selector'], True, (0,0,255))
+
+	bienvenido_render    = procesar_idioma('lang_welcome_char_selector',fuente_titulo)
+	cerrar_sesion_render = procesar_idioma('lang_close_session',fuente_botones)
+	seleccionar_render   = procesar_idioma('lang_select_botton',fuente_botones)
+	boton_crear_render   = procesar_idioma('lang_make_char_botton',fuente_bonito)
 	pantalla.blit(bienvenido_render,(218,47))
-	cerrar_sesion_render = fuente_botones.render(language['lang_close_session'], True, (239,228,176))
 	pantalla.blit(cerrar_sesion_render,(650,6))
-	seleccionar_render = fuente_botones.render(language['lang_select_botton'], True, (237,28,36))
 	pantalla.blit(seleccionar_render,(638,518))
-	boton_crear_render = fuente_bonito.render(language['lang_make_char_botton'], True, (136,0,21))
 	pantalla.blit(boton_crear_render,(54,516))
 
 	return personajes_cuenta
@@ -511,21 +527,6 @@ def crear_personaje(pantalla,user,class_selected):
 	verificar_nombre     = True
 	contador_verificador = 0
 	nombre_personaje_creado = escribir_nombre(pantalla,lista_nombres,class_selected)
-	#nombre_personaje_creado = raw_input(language['lang_char_name']+': ')
-	# while verificar_nombre:
-	# 	contador_verificador += 1
-	# 	while nombre_personaje_creado in lista_nombres:
-	# 		nombre_personaje_creado = raw_input(language['lang_name_already_exist']+': ')
-	# 		contador_verificador = 0
-	# 	while  len(nombre_personaje_creado)>10:
-	# 		nombre_personaje_creado = raw_input(language['lang_name_too_long']+': ')
-	# 		contador_verificador = 0
-	# 	while  len(nombre_personaje_creado)<3:
-	# 		nombre_personaje_creado = raw_input(language['lang_name_too_short']+': ')
-	# 		contador_verificador = 0
-	# 	if contador_verificador == 5:
-	# 		verificar_nombre = False
-
 
 	file_account = open('accounts.dat')
 	for linea in file_account:

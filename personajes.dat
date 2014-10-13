@@ -1,6 +1,6 @@
 #id_personaje;clase;nombre;nivel;experiencia;ultimo_mapa;ultima_celda;vida_extra
-1;1;TEST;1;0;0000;23;0
-2;2;FLAN;1;0;0004;75;0
+1;1;TEST;1;0;0004;107;0
+2;2;FLAN;1;0;0004;243;0
 3;1;sdg;1;0;0000;080;0
 4;1;aweonao;1;0;0000;080;0
 5;2;Steevy;1;0;0007;182;0
