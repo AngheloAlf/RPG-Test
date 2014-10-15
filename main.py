@@ -10,12 +10,7 @@ from functions import *
 from functions_log_in import *
 from constants import *
 
-cosas_hacer = ('0','1','2')
-
 hacer  		     = True
-sesion 		     = False
-crear_cuenta     = False
-oli              = False
 try:
 	Titulo       = language['lang_titulo']
 except:
@@ -46,116 +41,99 @@ if debug_mode:
 		#print language['lang_busy_loop_on']
 	print ''
 
-print language['lang_welcome']
+#print language['lang_welcome']
 print ''
 
+pygame.init()
+pantalla = pygame.display.set_mode(resolution)
+pygame.display.set_caption(Titulo)
+clock 	 = pygame.time.Clock()
+menus = importar_menus()
+blit_iniciar_sesion(pantalla,menus)
+
+pygame.mixer.init(44100)
+main_dir = os.path.split(os.path.abspath(__file__))[0]
+data_dir = os.path.join(main_dir, 'music')
+ 
+
+crear_cuenta 			= False
+sesion_iniciada 		= False
+character_selector_menu = False
+character_creator_menu  = False
+juego_loop 				= False
+pausa 					= False
+pelea 					= False
+class_selected          = '0'
+character_selected 		= '0'
+reproducir_musica		= False
+enemigos_bliteados		= []
+colision_pj_mob 		= False
+screenX     			= 0
+if aspect_ratio == '2':
+	screenX 			= 133
+screenY 				= 0
+contador_pelea 			= 0
+animacion_number   		= 0
+datos_imagenes			= None
+user 					= ''
+password				= ''
+
 while hacer:
-	print language['lang_select_number']
-	print language['lang_exit']
-	print language['lang_log_in']
-	print language['lang_make_account']
+	alf 					= ''
+	#user_render     = fuente_pequena.render(user, True, (0,0,255))
+	#for i in range(len(password)):
+	#	alf += '*'
+	#password_render = fuente_pequena.render(alf, True, (0,0,255))
+	#blit_iniciar_sesion(pantalla,menus)
+	#pantalla.blit(user_render,(330,245))
+	#pantalla.blit(password_render,(330,279))
+	if enable_busy_loop:
+		milliseconds = clock.tick_busy_loop(FPS)
+	else:
+		milliseconds = clock.tick(FPS)
+	if show_FPS:
+		pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 
-	seleccion_hacer = raw_input(language['lang_select_option']+': ')
+	mouspos = pygame.mouse.get_pos()
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			hacer = False
+		elif event.type == pygame.MOUSEBUTTONDOWN:
+			if pygame.mouse.get_pressed()[0]==True:
+				user,password,sesion_iniciada,crear_cuenta = apretar_mouse_hacer(pantalla,mouspos,user,password,menus)
+	
+	if crear_cuenta:
+		blit_crear_cuenta(pantalla,menus)
+		while crear_cuenta:
+			if enable_busy_loop:
+				milliseconds = clock.tick_busy_loop(FPS)
+			else:
+				milliseconds = clock.tick(FPS)
+			if show_FPS:
+				pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 
-	while seleccion_hacer not in cosas_hacer:
-		print language['lang_not_valid']
-		seleccion_hacer = raw_input(language['lang_select_option']+': ')
-	if seleccion_hacer == '0':
-		hacer = False
-	elif seleccion_hacer == '1':
-		sesion = True
-		print ''
-		print language['lang_select_log_in']
-		print language['lang_zero_to_exit']
-		print ''
-	elif seleccion_hacer == '2':
-		print ''
-		print language['lang_select_make_account']
-		print language['lang_zero_to_exit']
-		print ''
-		crear_cuenta = True
+			mouspos = pygame.mouse.get_pos()
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					hacer        = False
+					crear_cuenta = False
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE: 
+						crear_cuenta = False
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if pygame.mouse.get_pressed()[0]==True:
+						crear_cuenta = apretar_mouse_crear_cuenta(pantalla,mouspos,menus)
+			pygame.display.flip()
+		blit_iniciar_sesion(pantalla,menus)
+	if sesion_iniciada:	
 
-	while sesion:
-		user	 = raw_input(language['lang_input_user']+': ')
-		if user == '0':
-			sesion = False
-			continue
-		password = raw_input(language['lang_input_pass']+': ')
-		clave_verificada = verificar_usuario_clave(user,password)
-		if clave_verificada:
-			print language['lang_starting_sesion']
-			sesion = False
-			#hacer = False
-			oli    = True
-		else:
-			print ''
-			print language['lang_user_pass_error']
-			print ''
-	while crear_cuenta:
-		user      = raw_input(language['lang_input_user']+': ')
-		if user == '0':
-			crear_cuenta = False
-			print ''
-			continue
-		if revisar_existencia_usuario(user):
-			print language['lang_user_already_exist']
-			continue
-		if ';' in user or len(user)<1:
-			print language['lang_user_not_valid']
-			continue
-		password  = raw_input(language['lang_input_pass']+': ')
-		password2 = raw_input(language['lang_reinput_pass']+': ')
-		if password == '0' or password2 == '0':
-			crear_cuenta = False
-			print ''
-			continue
-		if verificar_password(password,password2):
-			print language['lang_pass_error']
-			continue
-		if ';' in password:
-			print language['lang_pass_not_valid']
-			continue
-		datos_usuario = []
-		datos_usuario.append(user)
-		datos_usuario.append(password)
-		agregar_usuario(datos_usuario)
-		print language['lang_make_account_successful']
-		print ''
-		crear_cuenta = False
-
-	if oli:
-		oli 					= False
-		pygame.init()
-		pantalla			= pygame.display.set_mode(resolution)
-		pygame.display.set_caption(Titulo)
-		clock 					= pygame.time.Clock()
-		character_selector_menu = True
-		character_creator_menu  = False
-		juego_loop 				= False
-		pausa 					= False
-		pelea 					= False
-		class_selected          = '0'
-		character_selected 		= '0'
-		reproducir_musica		= False
-		enemigos_bliteados		= []
-		colision_pj_mob 		= False
-		screenX     			= 0
-		if aspect_ratio == '2':
-			screenX 			= 133
-		screenY 				= 0
-		contador_pelea 			= 0
-		animacion_number   		= 0
-		datos_imagenes			= None
-
-		personajes_cuenta = blit_selec_pers(pantalla,user)
-		
-		pygame.mixer.init(44100)
-		main_dir 			= os.path.split(os.path.abspath(__file__))[0]
-		data_dir 			= os.path.join(main_dir, 'music')
+		personajes_cuenta = blit_selec_pers(pantalla,user,menus)
+		sesion_iniciada   = False
 		#battle_start_music 	= pygame.mixer.Sound(os.path.join(data_dir, "Battle_start.ogg"))
 		#battle_loop_music 	= pygame.mixer.Sound(os.path.join(data_dir, "Battle_loop.ogg"))
 
-		print language['lang_log_in_successful']
+		procesar_idioma('lang_log_in_successful')
+		character_selector_menu = True
 
 		while character_selector_menu:
 			if enable_busy_loop:
@@ -169,6 +147,7 @@ while hacer:
 			for event in pygame.event.get():
 				
 				if event.type == pygame.QUIT:
+					hacer = False
 					character_selector_menu = False
 					print language['lang_log_out']
 					continue
@@ -190,7 +169,7 @@ while hacer:
 		            #if event.key == pygame.K_s: 
 				elif event.type == pygame.MOUSEBUTTONDOWN:
 					if pygame.mouse.get_pressed()[0]==True:
-						character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados,datos_imagenes = apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta,datos_imagenes)
+						character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados,datos_imagenes = apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta,datos_imagenes,menus)
 
 			while character_creator_menu:
 				if enable_busy_loop:
@@ -203,6 +182,7 @@ while hacer:
 				mouspos = pygame.mouse.get_pos()
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
+						hacer = False
 						character_creator_menu  = False
 						character_selector_menu = False
 						print language['lang_log_out']
@@ -215,7 +195,7 @@ while hacer:
 
 					elif event.type == pygame.MOUSEBUTTONDOWN:
 						if pygame.mouse.get_pressed()[0]==True:
-							personajes_cuenta,class_selected,character_creator_menu,character_selector_menu = apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,personajes_cuenta)
+							personajes_cuenta,class_selected,character_creator_menu,character_selector_menu = apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,personajes_cuenta,menus)
 							
 				pygame.display.flip()
 
@@ -400,4 +380,7 @@ while hacer:
 
 		print ''
 
-		pygame.quit()
+		user 	 = ''
+		password = ''
+		blit_iniciar_sesion(pantalla,menus)
+	pygame.display.flip()
