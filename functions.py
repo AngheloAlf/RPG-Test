@@ -103,9 +103,151 @@ def apretar_mouse_crear_cuenta(pantalla,mouspos,menus,creac_user,creac_password,
 		crear_cuenta = False
 	return crear_cuenta,creac_user,creac_password,creac_password2
 
+def escribir_en_pantalla(nombre_personaje_creado,maximo_nombre):
+	escribiendo = True
+	for event in pygame.event.get():
+		if event.type == pygame.KEYDOWN: 
+			if event.key == pygame.K_RETURN:
+				escribiendo = False
+			elif event.key == pygame.K_BACKSPACE:
+				if nombre_personaje_creado != '':
+					nombre_personaje_creado = nombre_personaje_creado[:-1]
+			if len(nombre_personaje_creado) <= maximo_nombre:
+				if event.key == pygame.K_0 or event.key == pygame.K_KP0:
+					nombre_personaje_creado += '0'
+				elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
+					nombre_personaje_creado += '1'
+				elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
+					nombre_personaje_creado += '2'
+				elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
+					nombre_personaje_creado += '3'
+				elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
+					nombre_personaje_creado += '4'
+				elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
+					nombre_personaje_creado += '5'
+				elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
+					nombre_personaje_creado += '6'
+				elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
+					nombre_personaje_creado += '7'
+				elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
+					nombre_personaje_creado += '8'
+				elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
+					nombre_personaje_creado += '9'
+				mods = pygame.key.get_mods()
+				if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
+					if event.key == pygame.K_q:
+						nombre_personaje_creado += 'Q'
+					elif event.key == pygame.K_w:
+						nombre_personaje_creado += 'W'
+					elif event.key == pygame.K_e:
+						nombre_personaje_creado += 'E'
+					elif event.key == pygame.K_r:
+						nombre_personaje_creado += 'R'
+					elif event.key == pygame.K_t:
+						nombre_personaje_creado += 'T'
+					elif event.key == pygame.K_y:
+						nombre_personaje_creado += 'Y'
+					elif event.key == pygame.K_u:
+						nombre_personaje_creado += 'U'
+					elif event.key == pygame.K_i:
+						nombre_personaje_creado += 'I'
+					elif event.key == pygame.K_o:
+						nombre_personaje_creado += 'O'
+					elif event.key == pygame.K_p:
+						nombre_personaje_creado += 'P'
+					elif event.key == pygame.K_a:
+						nombre_personaje_creado += 'A'
+					elif event.key == pygame.K_s:
+						nombre_personaje_creado += 'S'
+					elif event.key == pygame.K_d:
+						nombre_personaje_creado += 'D'
+					elif event.key == pygame.K_f:
+						nombre_personaje_creado += 'F'
+					elif event.key == pygame.K_g:
+						nombre_personaje_creado += 'G'
+					elif event.key == pygame.K_h:
+						nombre_personaje_creado += 'H'
+					elif event.key == pygame.K_j:
+						nombre_personaje_creado += 'J'
+					elif event.key == pygame.K_k:
+						nombre_personaje_creado += 'K'
+					elif event.key == pygame.K_l:
+						nombre_personaje_creado += 'L'
+					elif event.key == pygame.K_z:
+						nombre_personaje_creado += 'Z'
+					elif event.key == pygame.K_x:
+						nombre_personaje_creado += 'X'
+					elif event.key == pygame.K_c:
+						nombre_personaje_creado += 'C'
+					elif event.key == pygame.K_v:
+						nombre_personaje_creado += 'V'
+					elif event.key == pygame.K_b:
+						nombre_personaje_creado += 'B'
+					elif event.key == pygame.K_n:
+						nombre_personaje_creado += 'N'
+					elif event.key == pygame.K_m:
+						nombre_personaje_creado += 'M'
+				else:
+					if event.key == pygame.K_q:
+						nombre_personaje_creado += 'q'
+					elif event.key == pygame.K_w:
+						nombre_personaje_creado += 'w'
+					elif event.key == pygame.K_e:
+						nombre_personaje_creado += 'e'
+					elif event.key == pygame.K_r:
+						nombre_personaje_creado += 'r'
+					elif event.key == pygame.K_t:
+						nombre_personaje_creado += 't'
+					elif event.key == pygame.K_y:
+						nombre_personaje_creado += 'y'
+					elif event.key == pygame.K_u:
+						nombre_personaje_creado += 'u'
+					elif event.key == pygame.K_i:
+						nombre_personaje_creado += 'i'
+					elif event.key == pygame.K_o:
+						nombre_personaje_creado += 'o'
+					elif event.key == pygame.K_p:
+						nombre_personaje_creado += 'p'
+					elif event.key == pygame.K_a:
+						nombre_personaje_creado += 'a'
+					elif event.key == pygame.K_s:
+						nombre_personaje_creado += 's'
+					elif event.key == pygame.K_d:
+						nombre_personaje_creado += 'd'
+					elif event.key == pygame.K_f:
+						nombre_personaje_creado += 'f'
+					elif event.key == pygame.K_g:
+						nombre_personaje_creado += 'g'
+					elif event.key == pygame.K_h:
+						nombre_personaje_creado += 'h'
+					elif event.key == pygame.K_j:
+						nombre_personaje_creado += 'j'
+					elif event.key == pygame.K_k:
+						nombre_personaje_creado += 'k'
+					elif event.key == pygame.K_l:
+						nombre_personaje_creado += 'l'
+					elif event.key == pygame.K_z:
+						nombre_personaje_creado += 'z'
+					elif event.key == pygame.K_x:
+						nombre_personaje_creado += 'x'
+					elif event.key == pygame.K_c:
+						nombre_personaje_creado += 'c'
+					elif event.key == pygame.K_v:
+						nombre_personaje_creado += 'v'
+					elif event.key == pygame.K_b:
+						nombre_personaje_creado += 'b'
+					elif event.key == pygame.K_n:
+						nombre_personaje_creado += 'n'
+					elif event.key == pygame.K_m:
+						nombre_personaje_creado += 'm'
+				if event.key == pygame.K_SPACE:
+					nombre_personaje_creado += ' '
+				elif event.key == pygame.K_PERIOD:
+					nombre_personaje_creado += '.'
+	return nombre_personaje_creado,escribiendo
+
 def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 	nombre_personaje_creado = ''
-	escribir    			= True
 	alf = ''
 	if estado == 'iniciar_sesion':
 		if variable == 'user':
@@ -166,171 +308,31 @@ def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 	if aspect_ratio == '2':
 		posx += 133
 		posx_variable1 += 133
-	while escribir:
-		escribiendo = True
+	escribiendo = True
+	if estado == 'iniciar_sesion':
+		blit_iniciar_sesion(pantalla,menus)
+	elif estado == 'crear_cuenta':
+		blit_crear_cuenta(pantalla,menus)
+	while escribiendo:
+		nombre_personaje_creado,escribiendo = escribir_en_pantalla(nombre_personaje_creado,23)
+
+		alf  = ''
+		for i in range(len(nombre_personaje_creado)):
+			alf += '*'
+
 		if estado == 'iniciar_sesion':
 			blit_iniciar_sesion(pantalla,menus)
 		elif estado == 'crear_cuenta':
 			blit_crear_cuenta(pantalla,menus)
-		while escribiendo:
-			alf = ''
-			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN: 
-					if event.key == pygame.K_RETURN:
-						escribiendo = False
-						escribir    = False
-					elif event.key == pygame.K_BACKSPACE:
-						if nombre_personaje_creado != '':
-							nombre_personaje_creado = nombre_personaje_creado[:-1]
-							alf = alf[:-1]
-							if estado == 'iniciar_sesion':
-								blit_iniciar_sesion(pantalla,menus)
-							elif estado == 'crear_cuenta':
-								blit_crear_cuenta(pantalla,menus)
-					if len(nombre_personaje_creado) <= 23:
-						if event.key == pygame.K_0 or event.key == pygame.K_KP0:
-							nombre_personaje_creado += '0'
-						elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
-							nombre_personaje_creado += '1'
-						elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-							nombre_personaje_creado += '2'
-						elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-							nombre_personaje_creado += '3'
-						elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
-							nombre_personaje_creado += '4'
-						elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
-							nombre_personaje_creado += '5'
-						elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
-							nombre_personaje_creado += '6'
-						elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
-							nombre_personaje_creado += '7'
-						elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
-							nombre_personaje_creado += '8'
-						elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
-							nombre_personaje_creado += '9'
-						mods = pygame.key.get_mods()
-						if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
-							if event.key == pygame.K_q:
-								nombre_personaje_creado += 'Q'
-							elif event.key == pygame.K_w:
-								nombre_personaje_creado += 'W'
-							elif event.key == pygame.K_e:
-								nombre_personaje_creado += 'E'
-							elif event.key == pygame.K_r:
-								nombre_personaje_creado += 'R'
-							elif event.key == pygame.K_t:
-								nombre_personaje_creado += 'T'
-							elif event.key == pygame.K_y:
-								nombre_personaje_creado += 'Y'
-							elif event.key == pygame.K_u:
-								nombre_personaje_creado += 'U'
-							elif event.key == pygame.K_i:
-								nombre_personaje_creado += 'I'
-							elif event.key == pygame.K_o:
-								nombre_personaje_creado += 'O'
-							elif event.key == pygame.K_p:
-								nombre_personaje_creado += 'P'
-							elif event.key == pygame.K_a:
-								nombre_personaje_creado += 'A'
-							elif event.key == pygame.K_s:
-								nombre_personaje_creado += 'S'
-							elif event.key == pygame.K_d:
-								nombre_personaje_creado += 'D'
-							elif event.key == pygame.K_f:
-								nombre_personaje_creado += 'F'
-							elif event.key == pygame.K_g:
-								nombre_personaje_creado += 'G'
-							elif event.key == pygame.K_h:
-								nombre_personaje_creado += 'H'
-							elif event.key == pygame.K_j:
-								nombre_personaje_creado += 'J'
-							elif event.key == pygame.K_k:
-								nombre_personaje_creado += 'K'
-							elif event.key == pygame.K_l:
-								nombre_personaje_creado += 'L'
-							elif event.key == pygame.K_z:
-								nombre_personaje_creado += 'Z'
-							elif event.key == pygame.K_x:
-								nombre_personaje_creado += 'X'
-							elif event.key == pygame.K_c:
-								nombre_personaje_creado += 'C'
-							elif event.key == pygame.K_v:
-								nombre_personaje_creado += 'V'
-							elif event.key == pygame.K_b:
-								nombre_personaje_creado += 'B'
-							elif event.key == pygame.K_n:
-								nombre_personaje_creado += 'N'
-							elif event.key == pygame.K_m:
-								nombre_personaje_creado += 'M'
-						else:
-							if event.key == pygame.K_q:
-								nombre_personaje_creado += 'q'
-							elif event.key == pygame.K_w:
-								nombre_personaje_creado += 'w'
-							elif event.key == pygame.K_e:
-								nombre_personaje_creado += 'e'
-							elif event.key == pygame.K_r:
-								nombre_personaje_creado += 'r'
-							elif event.key == pygame.K_t:
-								nombre_personaje_creado += 't'
-							elif event.key == pygame.K_y:
-								nombre_personaje_creado += 'y'
-							elif event.key == pygame.K_u:
-								nombre_personaje_creado += 'u'
-							elif event.key == pygame.K_i:
-								nombre_personaje_creado += 'i'
-							elif event.key == pygame.K_o:
-								nombre_personaje_creado += 'o'
-							elif event.key == pygame.K_p:
-								nombre_personaje_creado += 'p'
-							elif event.key == pygame.K_a:
-								nombre_personaje_creado += 'a'
-							elif event.key == pygame.K_s:
-								nombre_personaje_creado += 's'
-							elif event.key == pygame.K_d:
-								nombre_personaje_creado += 'd'
-							elif event.key == pygame.K_f:
-								nombre_personaje_creado += 'f'
-							elif event.key == pygame.K_g:
-								nombre_personaje_creado += 'g'
-							elif event.key == pygame.K_h:
-								nombre_personaje_creado += 'h'
-							elif event.key == pygame.K_j:
-								nombre_personaje_creado += 'j'
-							elif event.key == pygame.K_k:
-								nombre_personaje_creado += 'k'
-							elif event.key == pygame.K_l:
-								nombre_personaje_creado += 'l'
-							elif event.key == pygame.K_z:
-								nombre_personaje_creado += 'z'
-							elif event.key == pygame.K_x:
-								nombre_personaje_creado += 'x'
-							elif event.key == pygame.K_c:
-								nombre_personaje_creado += 'c'
-							elif event.key == pygame.K_v:
-								nombre_personaje_creado += 'v'
-							elif event.key == pygame.K_b:
-								nombre_personaje_creado += 'b'
-							elif event.key == pygame.K_n:
-								nombre_personaje_creado += 'n'
-							elif event.key == pygame.K_m:
-								nombre_personaje_creado += 'm'
-						if event.key == pygame.K_SPACE:
-							nombre_personaje_creado += ' '
-						elif event.key == pygame.K_PERIOD:
-							nombre_personaje_creado += '.'
-				nombre_personaje_render = fuente_pequena.render(nombre_personaje_creado, True, (0,0,255))
-				for i in range(len(nombre_personaje_creado)):
-					alf += '*'
-				alf_render = fuente_pequena.render(alf, True, (0,0,255))
-				if variable == 'password' or variable == 'password2':
-					pantalla.blit(alf_render,(posx,posy))
-				else:
-					pantalla.blit(nombre_personaje_render,(posx,posy))
-				if estado == 'crear_cuenta':
-					pantalla.blit(variable2_render,(posx_variable2,posy_variable2))
-				pantalla.blit(variable1_render,(posx_variable1,posy_variable1))
-			pygame.display.flip()
+
+		if variable == 'user':
+			pantalla.blit(fuente_pequena.render(nombre_personaje_creado, True, (0,0,255)),(posx,posy))
+		else:
+			pantalla.blit(fuente_pequena.render(alf, True, (0,0,255)),(posx,posy))
+		if estado == 'crear_cuenta':
+			pantalla.blit(variable2_render,(posx_variable2,posy_variable2))
+		pantalla.blit(variable1_render,(posx_variable1,posy_variable1))
+		pygame.display.flip()
 	return nombre_personaje_creado
 
 def apretar_mouse_hacer(pantalla,mouspos,user,password,menus):
@@ -676,153 +678,15 @@ def escribir_nombre(pantalla,lista_nombres,class_selected,menus):
 		pantalla.blit(nombre_de_tu_render,(333+Xnombre,220+Ynombre))
 		pantalla.blit(personaje_render,(335+Xnombre,275+Ynombre))
 		while escribiendo:
-			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN: 
-					if event.key == pygame.K_RETURN:
-						escribiendo = False
-					elif event.key == pygame.K_BACKSPACE:
-						if nombre_personaje_creado != '':
-							nombre_personaje_creado = nombre_personaje_creado[:-1]
-							blit_creac_pers(pantalla,menus)
-							blit_perso_selec_creacion(class_selected,pantalla,menus)
-							pantalla.blit(menus[4],(Xnombre,Ynombre))
-							pantalla.blit(escribe_el_render,(333+Xnombre,170+Ynombre))
-							pantalla.blit(nombre_de_tu_render,(333+Xnombre,220+Ynombre))
-							pantalla.blit(personaje_render,(335+Xnombre,275+Ynombre))
-					if len(nombre_personaje_creado) <= 11:
-						mods = pygame.key.get_mods()
-						if event.key == pygame.K_0 or event.key == pygame.K_KP0:
-							nombre_personaje_creado += '0'
-						elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
-							nombre_personaje_creado += '1'
-						elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-							nombre_personaje_creado += '2'
-						elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-							nombre_personaje_creado += '3'
-						elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
-							nombre_personaje_creado += '4'
-						elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
-							nombre_personaje_creado += '5'
-						elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
-							nombre_personaje_creado += '6'
-						elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
-							nombre_personaje_creado += '7'
-						elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
-							nombre_personaje_creado += '8'
-						elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
-							nombre_personaje_creado += '9'					
-						if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
-							if event.key == pygame.K_q:
-								nombre_personaje_creado += 'Q'
-							elif event.key == pygame.K_w:
-								nombre_personaje_creado += 'W'
-							elif event.key == pygame.K_e:
-								nombre_personaje_creado += 'E'
-							elif event.key == pygame.K_r:
-								nombre_personaje_creado += 'R'
-							elif event.key == pygame.K_t:
-								nombre_personaje_creado += 'T'
-							elif event.key == pygame.K_y:
-								nombre_personaje_creado += 'Y'
-							elif event.key == pygame.K_u:
-								nombre_personaje_creado += 'U'
-							elif event.key == pygame.K_i:
-								nombre_personaje_creado += 'I'
-							elif event.key == pygame.K_o:
-								nombre_personaje_creado += 'O'
-							elif event.key == pygame.K_p:
-								nombre_personaje_creado += 'P'
-							elif event.key == pygame.K_a:
-								nombre_personaje_creado += 'A'
-							elif event.key == pygame.K_s:
-								nombre_personaje_creado += 'S'
-							elif event.key == pygame.K_d:
-								nombre_personaje_creado += 'D'
-							elif event.key == pygame.K_f:
-								nombre_personaje_creado += 'F'
-							elif event.key == pygame.K_g:
-								nombre_personaje_creado += 'G'
-							elif event.key == pygame.K_h:
-								nombre_personaje_creado += 'H'
-							elif event.key == pygame.K_j:
-								nombre_personaje_creado += 'J'
-							elif event.key == pygame.K_k:
-								nombre_personaje_creado += 'K'
-							elif event.key == pygame.K_l:
-								nombre_personaje_creado += 'L'
-							elif event.key == pygame.K_z:
-								nombre_personaje_creado += 'Z'
-							elif event.key == pygame.K_x:
-								nombre_personaje_creado += 'X'
-							elif event.key == pygame.K_c:
-								nombre_personaje_creado += 'C'
-							elif event.key == pygame.K_v:
-								nombre_personaje_creado += 'V'
-							elif event.key == pygame.K_b:
-								nombre_personaje_creado += 'B'
-							elif event.key == pygame.K_n:
-								nombre_personaje_creado += 'N'
-							elif event.key == pygame.K_m:
-								nombre_personaje_creado += 'M'
-						else:
-							if event.key == pygame.K_q:
-								nombre_personaje_creado += 'q'
-							elif event.key == pygame.K_w:
-								nombre_personaje_creado += 'w'
-							elif event.key == pygame.K_e:
-								nombre_personaje_creado += 'e'
-							elif event.key == pygame.K_r:
-								nombre_personaje_creado += 'r'
-							elif event.key == pygame.K_t:
-								nombre_personaje_creado += 't'
-							elif event.key == pygame.K_y:
-								nombre_personaje_creado += 'y'
-							elif event.key == pygame.K_u:
-								nombre_personaje_creado += 'u'
-							elif event.key == pygame.K_i:
-								nombre_personaje_creado += 'i'
-							elif event.key == pygame.K_o:
-								nombre_personaje_creado += 'o'
-							elif event.key == pygame.K_p:
-								nombre_personaje_creado += 'p'
-							elif event.key == pygame.K_a:
-								nombre_personaje_creado += 'a'
-							elif event.key == pygame.K_s:
-								nombre_personaje_creado += 's'
-							elif event.key == pygame.K_d:
-								nombre_personaje_creado += 'd'
-							elif event.key == pygame.K_f:
-								nombre_personaje_creado += 'f'
-							elif event.key == pygame.K_g:
-								nombre_personaje_creado += 'g'
-							elif event.key == pygame.K_h:
-								nombre_personaje_creado += 'h'
-							elif event.key == pygame.K_j:
-								nombre_personaje_creado += 'j'
-							elif event.key == pygame.K_k:
-								nombre_personaje_creado += 'k'
-							elif event.key == pygame.K_l:
-								nombre_personaje_creado += 'l'
-							elif event.key == pygame.K_z:
-								nombre_personaje_creado += 'z'
-							elif event.key == pygame.K_x:
-								nombre_personaje_creado += 'x'
-							elif event.key == pygame.K_c:
-								nombre_personaje_creado += 'c'
-							elif event.key == pygame.K_v:
-								nombre_personaje_creado += 'v'
-							elif event.key == pygame.K_b:
-								nombre_personaje_creado += 'b'
-							elif event.key == pygame.K_n:
-								nombre_personaje_creado += 'n'
-							elif event.key == pygame.K_m:
-								nombre_personaje_creado += 'm'
-						if event.key == pygame.K_SPACE:
-							nombre_personaje_creado += ' '
-						elif event.key == pygame.K_PERIOD:
-							nombre_personaje_creado += '.'
-				nombre_personaje_render = fuente.render(nombre_personaje_creado, True, (0,0,255))
-				pantalla.blit(nombre_personaje_render,(315+Xnombre,494+Ynombre))		
+			nombre_personaje_creado,escribiendo = escribir_en_pantalla(nombre_personaje_creado,11)
+
+			blit_creac_pers(pantalla,menus)
+			blit_perso_selec_creacion(class_selected,pantalla,menus)
+			pantalla.blit(menus[4],(Xnombre,Ynombre))
+			pantalla.blit(escribe_el_render,(333+Xnombre,170+Ynombre))
+			pantalla.blit(nombre_de_tu_render,(333+Xnombre,220+Ynombre))
+			pantalla.blit(personaje_render,(335+Xnombre,275+Ynombre))
+			pantalla.blit(fuente.render(nombre_personaje_creado, True, (0,0,255)),(315+Xnombre,494+Ynombre))	
 			
 			pygame.display.flip()
 		while verificador:
