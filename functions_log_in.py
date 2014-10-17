@@ -13,8 +13,8 @@ def verificar_usuario_clave(user,password):
 
 def verificar_password(password,password2):
 	if password==password2:
-		return False
-	return True
+		return True
+	return False
 
 def revisar_existencia_usuario(user):
 	file_users = open('accounts.dat')
@@ -24,9 +24,9 @@ def revisar_existencia_usuario(user):
 			continue
 		if user.lower() == datos[1].lower():
 			file_users.close()
-			return True
+			return False
 	file_users.close()
-	return False
+	return True
 
 def agregar_usuario(datos):
 	file_users = open('accounts.dat')

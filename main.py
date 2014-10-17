@@ -25,23 +25,17 @@ resolution		 = get_settings_resolution()
 if debug_mode:
 	Titulo = '[DEBUG] | '+Titulo
 	procesar_idioma('lang_debug_on')
-	#print language['lang_debug_on']
 	print 'FPS:',FPS
 	if show_FPS:
 		procesar_idioma('lang_show_fps_on')
-		#print language['lang_show_fps_on']
 	if aspect_ratio=='2':
 		procesar_idioma('lang_aspect_ratio_2')
-		#print language['lang_aspect_ratio_2']
 	else:
 		procesar_idioma('lang_aspect_ratio_1')
-		#print language['lang_aspect_ratio_1']
 	if enable_busy_loop:
 		procesar_idioma('lang_busy_loop_on')
-		#print language['lang_busy_loop_on']
 	print ''
 
-#print language['lang_welcome']
 print ''
 
 pygame.init()
@@ -77,16 +71,13 @@ animacion_number   		= 0
 datos_imagenes			= None
 user 					= ''
 password				= ''
+creac_user 				= ''
+creac_password 			= ''
+creac_password2 		= ''
+battle_music 			= get_battle_music()
 
 while hacer:
 	alf 					= ''
-	#user_render     = fuente_pequena.render(user, True, (0,0,255))
-	#for i in range(len(password)):
-	#	alf += '*'
-	#password_render = fuente_pequena.render(alf, True, (0,0,255))
-	#blit_iniciar_sesion(pantalla,menus)
-	#pantalla.blit(user_render,(330,245))
-	#pantalla.blit(password_render,(330,279))
 	if enable_busy_loop:
 		milliseconds = clock.tick_busy_loop(FPS)
 	else:
@@ -122,7 +113,7 @@ while hacer:
 						crear_cuenta = False
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					if pygame.mouse.get_pressed()[0]==True:
-						crear_cuenta = apretar_mouse_crear_cuenta(pantalla,mouspos,menus)
+						crear_cuenta,creac_user,creac_password,creac_password2 = apretar_mouse_crear_cuenta(pantalla,mouspos,menus,creac_user,creac_password,creac_password2)
 			pygame.display.flip()
 		blit_iniciar_sesion(pantalla,menus)
 	if sesion_iniciada:	
@@ -292,7 +283,7 @@ while hacer:
 							if event.key == pygame.K_p:
 								print 'while_pausa'
 					pygame.display.flip()
-
+				cancion = random.choice(battle_music.keys())
 				while pelea:
 					if enable_busy_loop:
 						milliseconds = clock.tick_busy_loop(FPS)
@@ -311,13 +302,13 @@ while hacer:
 							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 						screenX,screenY,blit_animacion,animacion_number = animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacion_number,datos_imagenes)
 						if reproducir_musica:
-							pygame.mixer.music.load(os.path.join(data_dir, "Battle_start.ogg"))
+							pygame.mixer.music.load(os.path.join(data_dir, "Battle_start"+cancion+".ogg"))
+							print 'Reproduciendo',battle_music[cancion]
 							pygame.mixer.music.play()
 							#pygame.mixer.Sound.play(battle_start_music)
 							reproducir_musica = False
 
-						pos_musica = pygame.mixer.music.get_pos()
-						if pos_musica >2900:
+						if pygame.mixer.music.get_pos() >2900:
 							blit_animacion = False
 
 						pygame.display.flip()
@@ -329,7 +320,7 @@ while hacer:
 							celda_pj_pelea,celda_mob_pelea = blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje,datos_imagenes)
 					
 					if pygame.mixer.music.get_busy() == False:
-						pygame.mixer.music.load(os.path.join(data_dir, "Battle_loop.ogg"))
+						pygame.mixer.music.load(os.path.join(data_dir, "Battle_loop"+cancion+".ogg"))
 						pygame.mixer.music.play()
 					contador_pelea += 1
 

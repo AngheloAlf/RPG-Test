@@ -86,3 +86,12 @@ def get_multiplicator_resolution():
 	elif aspect_ratio == '2':
 		return resolution[1]/600.0
 	return 1.0
+
+def get_battle_music():
+	file_battle_music = open('music/Battle_music.txt')
+	battle_music = dict()
+	for linea in file_battle_music:
+		valor = linea.strip().split('-')
+		battle_music[valor[0]]=valor[1]
+	file_battle_music.close()
+	return battle_music

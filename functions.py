@@ -46,25 +46,18 @@ def importar_menus():
 	return menus
 
 def blit_iniciar_sesion(pantalla,menus):
-	#img_iniciar_sesion = pygame.image.load(os.path.join("media","menu","iniciar_sesion.png"))
-	#img_iniciar_sesion = pygame.transform.scale(img_iniciar_sesion,(int(800*mult_resolution),int(600*mult_resolution)))
 	screenX 			 = 0
 	screenY 			 = 0
 	if aspect_ratio=='2':
 		screenX 		= 133
-		#lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png"))
-		#lateral         = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
 		pantalla.blit(menus[0],(0,0))
 		pantalla.blit(menus[0],(933,0))
 	pantalla.blit(menus[1],(screenX,screenY))
-	nombre   = procesar_idioma('lang_username',fuente,(153,217,234))
-	password = procesar_idioma('lang_password',fuente,(153,217,234))
-	log_in   = procesar_idioma('lang_log_in',fuente_botones)
-	sign_in  = procesar_idioma('lang_sign_in',fuente_botones)
-	pantalla.blit(nombre,(219,242))
-	pantalla.blit(password,(219,277))
-	pantalla.blit(log_in,(310,310))
-	pantalla.blit(sign_in,(310,356))
+	pantalla.blit(procesar_idioma('lang_username',fuente,(153,217,234)),(219+screenX,242+screenY))
+	pantalla.blit(procesar_idioma('lang_password',fuente,(153,217,234)),(219+screenX,277+screenY))
+	pantalla.blit(procesar_idioma('lang_log_in',fuente_botones),(310+screenX,310+screenY))
+	pantalla.blit(procesar_idioma('lang_sign_in',fuente_botones),(310+screenX,356+screenY))
+	pantalla.blit(procesar_idioma('lang_welcome',fuente_titulo),(218+screenX,47+screenY))
 	return
 
 def blit_crear_cuenta(pantalla,menus):
@@ -75,19 +68,14 @@ def blit_crear_cuenta(pantalla,menus):
 		pantalla.blit(menus[0],(0,0))
 		pantalla.blit(menus[0],(933,0))
 	pantalla.blit(menus[5],(screenX,screenY))
-	nombre   = procesar_idioma('lang_username',fuente,(153,217,234))
-	password = procesar_idioma('lang_password',fuente,(153,217,234))
-	password2= procesar_idioma('lang_password2',fuente,(153,217,234))
-	sign_in  = procesar_idioma('lang_sign_in',fuente_botones)
-	cancel   = procesar_idioma('lang_cancel',fuente_botones)
-	pantalla.blit(nombre,(219,215))
-	pantalla.blit(password,(219,251))
-	pantalla.blit(password2,(219,285))
-	pantalla.blit(sign_in,(310,330))
-	pantalla.blit(cancel,(310,376))
+	pantalla.blit(procesar_idioma('lang_username',fuente,(153,217,234)),(219+screenX,215+screenY))
+	pantalla.blit(procesar_idioma('lang_password',fuente,(153,217,234)),(219+screenX,251+screenY))
+	pantalla.blit(procesar_idioma('lang_password2',fuente,(153,217,234)),(219+screenX,285+screenY))
+	pantalla.blit(procesar_idioma('lang_sign_in',fuente_botones),(310+screenX,330+screenY))
+	pantalla.blit(procesar_idioma('lang_cancel',fuente_botones),(310+screenX,376+screenY))
 	return
 
-def apretar_mouse_crear_cuenta(pantalla,mouspos,menus):
+def apretar_mouse_crear_cuenta(pantalla,mouspos,menus,creac_user,creac_password,creac_password2):
 	crear_cuenta = True
 	mouseposX    = 0
 	mouseposY    = 0
@@ -95,32 +83,31 @@ def apretar_mouse_crear_cuenta(pantalla,mouspos,menus):
 	if aspect_ratio == '2':
 		mouseposX = 133
 	if (323+mouseposX<=mouspos[0]<=573+mouseposX) and (211+mouseposY<=mouspos[1]<=234+mouseposY):
-		print 'user'
-	#	user = escribir_user_pass(pantalla,'iniciar_sesion','user',menus,password)
+		creac_user = escribir_user_pass(pantalla,'crear_cuenta','user',menus,creac_password,creac_password2)
 	if (323+mouseposX<=mouspos[0]<=573+mouseposX) and (246+mouseposY<=mouspos[1]<=269+mouseposY):
-		#password = escribir_user_pass(pantalla,'iniciar_sesion','password',menus,user)
-		print 'password'
+		creac_password = escribir_user_pass(pantalla,'crear_cuenta','password',menus,creac_password2,creac_user)
 	if (323+mouseposX<=mouspos[0]<=573+mouseposX) and (281+mouseposY<=mouspos[1]<=304+mouseposY):
-		print 'password2'
-	
+		creac_password2 = escribir_user_pass(pantalla,'crear_cuenta','password2',menus,creac_password,creac_user)
 	if (291+mouseposX<=mouspos[0]<=510+mouseposX) and (325+mouseposY<=mouspos[1]<=368+mouseposY):
-		print 'crear_cuenta'
-		#if verificar_usuario_clave(user,password):
-		#	sesion_iniciada = True
-		#else:
-		#	error = procesar_idioma('lang_user_pass_error',fuente)
-		#	pantalla.blit(error,(150,100))
+		if revisar_existencia_usuario(creac_user) and len(creac_user) != 0:
+			if verificar_password(creac_password,creac_password2) and len(creac_password) != 0:
+				datos = [creac_user,creac_password]
+				agregar_usuario(datos)
+				procesar_idioma('lang_make_account_successful')
+				crear_cuenta = False
+			else:
+				pantalla.blit(procesar_idioma('lang_pass_error',fuente),(175+mouseposX,100+mouseposY))
+		else:
+			pantalla.blit(procesar_idioma('lang_user_already_exist',fuente),(200+mouseposX,100+mouseposY))
 	if (291+mouseposX<=mouspos[0]<=510+mouseposX) and (372+mouseposY<=mouspos[1]<=415+mouseposY):
-		print 'cancelar'
 		crear_cuenta = False
-	return crear_cuenta
+	return crear_cuenta,creac_user,creac_password,creac_password2
 
 def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 	nombre_personaje_creado = ''
 	escribir    			= True
 	alf = ''
 	if estado == 'iniciar_sesion':
-		#blit_iniciar_sesion(pantalla)
 		if variable == 'user':
 			posx = 330
 			posy = 245
@@ -136,16 +123,43 @@ def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 			posy_variable1 = 245
 			variable1_render = fuente_pequena.render(variable1, True, (0,0,255))
 	elif estado == 'crear_cuenta':
-		#blit_crear_cuenta(pantalla)
 		if variable == 'user':
-			posx = 200
-			posy = 300
+			posx = 330
+			posy = 218
+			posx_variable1 = 330
+			posy_variable1 = 253
+			posx_variable2 = 330
+			posy_variable2 = 288
+			for i in range(len(variable1)):
+				alf += '*'
+			variable1_render = fuente_pequena.render(alf, True, (0,0,255))
+			alf = ''
+			for j in range(len(variable2)):
+				alf += '*'
+			variable2_render = fuente_pequena.render(alf, True, (0,0,255))
 		elif variable == 'password':
-			posx = 200
-			posy = 350
+			posx = 330
+			posy = 253
+			posx_variable1 = 330
+			posy_variable1 = 288
+			posx_variable2 = 330
+			posy_variable2 = 218
+			for i in range(len(variable1)):
+				alf += '*'
+			variable1_render = fuente_pequena.render(alf, True, (0,0,255))
+			variable2_render = fuente_pequena.render(variable2, True, (0,0,255))
 		elif variable == 'password2':
-			posx = 200
-			posy = 400
+			posx = 330
+			posy = 288
+			posx_variable1 = 330
+			posy_variable1 = 253
+			posx_variable2 = 330
+			posy_variable2 = 218
+			for i in range(len(variable1)):
+				alf += '*'
+			variable1_render = fuente_pequena.render(alf, True, (0,0,255))
+			variable2_render = fuente_pequena.render(variable2, True, (0,0,255))
+		pantalla.blit(variable2_render,(posx_variable2,posy_variable2))
 	else:
 		return ''
 	pantalla.blit(variable1_render,(posx_variable1,posy_variable1))
@@ -154,7 +168,6 @@ def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 		posx_variable1 += 133
 	while escribir:
 		escribiendo = True
-		verificador = True
 		if estado == 'iniciar_sesion':
 			blit_iniciar_sesion(pantalla,menus)
 		elif estado == 'crear_cuenta':
@@ -165,6 +178,7 @@ def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 				if event.type == pygame.KEYDOWN: 
 					if event.key == pygame.K_RETURN:
 						escribiendo = False
+						escribir    = False
 					elif event.key == pygame.K_BACKSPACE:
 						if nombre_personaje_creado != '':
 							nombre_personaje_creado = nombre_personaje_creado[:-1]
@@ -172,174 +186,157 @@ def escribir_user_pass(pantalla,estado,variable,menus,variable1,variable2=None):
 							if estado == 'iniciar_sesion':
 								blit_iniciar_sesion(pantalla,menus)
 							elif estado == 'crear_cuenta':
-								pass
-					if event.key == pygame.K_0 or event.key == pygame.K_KP0:
-						nombre_personaje_creado += '0'
-					elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
-						nombre_personaje_creado += '1'
-					elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-						nombre_personaje_creado += '2'
-					elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-						nombre_personaje_creado += '3'
-					elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
-						nombre_personaje_creado += '4'
-					elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
-						nombre_personaje_creado += '5'
-					elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
-						nombre_personaje_creado += '6'
-					elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
-						nombre_personaje_creado += '7'
-					elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
-						nombre_personaje_creado += '8'
-					elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
-						nombre_personaje_creado += '9'
-					mods = pygame.key.get_mods()
-					if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
-						if event.key == pygame.K_q:
-							nombre_personaje_creado += 'Q'
-						elif event.key == pygame.K_w:
-							nombre_personaje_creado += 'W'
-						elif event.key == pygame.K_e:
-							nombre_personaje_creado += 'E'
-						elif event.key == pygame.K_r:
-							nombre_personaje_creado += 'R'
-						elif event.key == pygame.K_t:
-							nombre_personaje_creado += 'T'
-						elif event.key == pygame.K_y:
-							nombre_personaje_creado += 'Y'
-						elif event.key == pygame.K_u:
-							nombre_personaje_creado += 'U'
-						elif event.key == pygame.K_i:
-							nombre_personaje_creado += 'I'
-						elif event.key == pygame.K_o:
-							nombre_personaje_creado += 'O'
-						elif event.key == pygame.K_p:
-							nombre_personaje_creado += 'P'
-						elif event.key == pygame.K_a:
-							nombre_personaje_creado += 'A'
-						elif event.key == pygame.K_s:
-							nombre_personaje_creado += 'S'
-						elif event.key == pygame.K_d:
-							nombre_personaje_creado += 'D'
-						elif event.key == pygame.K_f:
-							nombre_personaje_creado += 'F'
-						elif event.key == pygame.K_g:
-							nombre_personaje_creado += 'G'
-						elif event.key == pygame.K_h:
-							nombre_personaje_creado += 'H'
-						elif event.key == pygame.K_j:
-							nombre_personaje_creado += 'J'
-						elif event.key == pygame.K_k:
-							nombre_personaje_creado += 'K'
-						elif event.key == pygame.K_l:
-							nombre_personaje_creado += 'L'
-						elif event.key == pygame.K_z:
-							nombre_personaje_creado += 'Z'
-						elif event.key == pygame.K_x:
-							nombre_personaje_creado += 'X'
-						elif event.key == pygame.K_c:
-							nombre_personaje_creado += 'C'
-						elif event.key == pygame.K_v:
-							nombre_personaje_creado += 'V'
-						elif event.key == pygame.K_b:
-							nombre_personaje_creado += 'B'
-						elif event.key == pygame.K_n:
-							nombre_personaje_creado += 'N'
-						elif event.key == pygame.K_m:
-							nombre_personaje_creado += 'M'
-					else:
-						if event.key == pygame.K_q:
-							nombre_personaje_creado += 'q'
-						elif event.key == pygame.K_w:
-							nombre_personaje_creado += 'w'
-						elif event.key == pygame.K_e:
-							nombre_personaje_creado += 'e'
-						elif event.key == pygame.K_r:
-							nombre_personaje_creado += 'r'
-						elif event.key == pygame.K_t:
-							nombre_personaje_creado += 't'
-						elif event.key == pygame.K_y:
-							nombre_personaje_creado += 'y'
-						elif event.key == pygame.K_u:
-							nombre_personaje_creado += 'u'
-						elif event.key == pygame.K_i:
-							nombre_personaje_creado += 'i'
-						elif event.key == pygame.K_o:
-							nombre_personaje_creado += 'o'
-						elif event.key == pygame.K_p:
-							nombre_personaje_creado += 'p'
-						elif event.key == pygame.K_a:
-							nombre_personaje_creado += 'a'
-						elif event.key == pygame.K_s:
-							nombre_personaje_creado += 's'
-						elif event.key == pygame.K_d:
-							nombre_personaje_creado += 'd'
-						elif event.key == pygame.K_f:
-							nombre_personaje_creado += 'f'
-						elif event.key == pygame.K_g:
-							nombre_personaje_creado += 'g'
-						elif event.key == pygame.K_h:
-							nombre_personaje_creado += 'h'
-						elif event.key == pygame.K_j:
-							nombre_personaje_creado += 'j'
-						elif event.key == pygame.K_k:
-							nombre_personaje_creado += 'k'
-						elif event.key == pygame.K_l:
-							nombre_personaje_creado += 'l'
-						elif event.key == pygame.K_z:
-							nombre_personaje_creado += 'z'
-						elif event.key == pygame.K_x:
-							nombre_personaje_creado += 'x'
-						elif event.key == pygame.K_c:
-							nombre_personaje_creado += 'c'
-						elif event.key == pygame.K_v:
-							nombre_personaje_creado += 'v'
-						elif event.key == pygame.K_b:
-							nombre_personaje_creado += 'b'
-						elif event.key == pygame.K_n:
-							nombre_personaje_creado += 'n'
-						elif event.key == pygame.K_m:
-							nombre_personaje_creado += 'm'
-					if event.key == pygame.K_SPACE:
-						nombre_personaje_creado += ' '
-					elif event.key == pygame.K_PERIOD:
-						nombre_personaje_creado += '.'
+								blit_crear_cuenta(pantalla,menus)
+					if len(nombre_personaje_creado) <= 23:
+						if event.key == pygame.K_0 or event.key == pygame.K_KP0:
+							nombre_personaje_creado += '0'
+						elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
+							nombre_personaje_creado += '1'
+						elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
+							nombre_personaje_creado += '2'
+						elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
+							nombre_personaje_creado += '3'
+						elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
+							nombre_personaje_creado += '4'
+						elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
+							nombre_personaje_creado += '5'
+						elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
+							nombre_personaje_creado += '6'
+						elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
+							nombre_personaje_creado += '7'
+						elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
+							nombre_personaje_creado += '8'
+						elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
+							nombre_personaje_creado += '9'
+						mods = pygame.key.get_mods()
+						if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
+							if event.key == pygame.K_q:
+								nombre_personaje_creado += 'Q'
+							elif event.key == pygame.K_w:
+								nombre_personaje_creado += 'W'
+							elif event.key == pygame.K_e:
+								nombre_personaje_creado += 'E'
+							elif event.key == pygame.K_r:
+								nombre_personaje_creado += 'R'
+							elif event.key == pygame.K_t:
+								nombre_personaje_creado += 'T'
+							elif event.key == pygame.K_y:
+								nombre_personaje_creado += 'Y'
+							elif event.key == pygame.K_u:
+								nombre_personaje_creado += 'U'
+							elif event.key == pygame.K_i:
+								nombre_personaje_creado += 'I'
+							elif event.key == pygame.K_o:
+								nombre_personaje_creado += 'O'
+							elif event.key == pygame.K_p:
+								nombre_personaje_creado += 'P'
+							elif event.key == pygame.K_a:
+								nombre_personaje_creado += 'A'
+							elif event.key == pygame.K_s:
+								nombre_personaje_creado += 'S'
+							elif event.key == pygame.K_d:
+								nombre_personaje_creado += 'D'
+							elif event.key == pygame.K_f:
+								nombre_personaje_creado += 'F'
+							elif event.key == pygame.K_g:
+								nombre_personaje_creado += 'G'
+							elif event.key == pygame.K_h:
+								nombre_personaje_creado += 'H'
+							elif event.key == pygame.K_j:
+								nombre_personaje_creado += 'J'
+							elif event.key == pygame.K_k:
+								nombre_personaje_creado += 'K'
+							elif event.key == pygame.K_l:
+								nombre_personaje_creado += 'L'
+							elif event.key == pygame.K_z:
+								nombre_personaje_creado += 'Z'
+							elif event.key == pygame.K_x:
+								nombre_personaje_creado += 'X'
+							elif event.key == pygame.K_c:
+								nombre_personaje_creado += 'C'
+							elif event.key == pygame.K_v:
+								nombre_personaje_creado += 'V'
+							elif event.key == pygame.K_b:
+								nombre_personaje_creado += 'B'
+							elif event.key == pygame.K_n:
+								nombre_personaje_creado += 'N'
+							elif event.key == pygame.K_m:
+								nombre_personaje_creado += 'M'
+						else:
+							if event.key == pygame.K_q:
+								nombre_personaje_creado += 'q'
+							elif event.key == pygame.K_w:
+								nombre_personaje_creado += 'w'
+							elif event.key == pygame.K_e:
+								nombre_personaje_creado += 'e'
+							elif event.key == pygame.K_r:
+								nombre_personaje_creado += 'r'
+							elif event.key == pygame.K_t:
+								nombre_personaje_creado += 't'
+							elif event.key == pygame.K_y:
+								nombre_personaje_creado += 'y'
+							elif event.key == pygame.K_u:
+								nombre_personaje_creado += 'u'
+							elif event.key == pygame.K_i:
+								nombre_personaje_creado += 'i'
+							elif event.key == pygame.K_o:
+								nombre_personaje_creado += 'o'
+							elif event.key == pygame.K_p:
+								nombre_personaje_creado += 'p'
+							elif event.key == pygame.K_a:
+								nombre_personaje_creado += 'a'
+							elif event.key == pygame.K_s:
+								nombre_personaje_creado += 's'
+							elif event.key == pygame.K_d:
+								nombre_personaje_creado += 'd'
+							elif event.key == pygame.K_f:
+								nombre_personaje_creado += 'f'
+							elif event.key == pygame.K_g:
+								nombre_personaje_creado += 'g'
+							elif event.key == pygame.K_h:
+								nombre_personaje_creado += 'h'
+							elif event.key == pygame.K_j:
+								nombre_personaje_creado += 'j'
+							elif event.key == pygame.K_k:
+								nombre_personaje_creado += 'k'
+							elif event.key == pygame.K_l:
+								nombre_personaje_creado += 'l'
+							elif event.key == pygame.K_z:
+								nombre_personaje_creado += 'z'
+							elif event.key == pygame.K_x:
+								nombre_personaje_creado += 'x'
+							elif event.key == pygame.K_c:
+								nombre_personaje_creado += 'c'
+							elif event.key == pygame.K_v:
+								nombre_personaje_creado += 'v'
+							elif event.key == pygame.K_b:
+								nombre_personaje_creado += 'b'
+							elif event.key == pygame.K_n:
+								nombre_personaje_creado += 'n'
+							elif event.key == pygame.K_m:
+								nombre_personaje_creado += 'm'
+						if event.key == pygame.K_SPACE:
+							nombre_personaje_creado += ' '
+						elif event.key == pygame.K_PERIOD:
+							nombre_personaje_creado += '.'
 				nombre_personaje_render = fuente_pequena.render(nombre_personaje_creado, True, (0,0,255))
 				for i in range(len(nombre_personaje_creado)):
 					alf += '*'
 				alf_render = fuente_pequena.render(alf, True, (0,0,255))
-				if estado == 'iniciar_sesion' and variable == 'password':
+				if variable == 'password' or variable == 'password2':
 					pantalla.blit(alf_render,(posx,posy))
 				else:
 					pantalla.blit(nombre_personaje_render,(posx,posy))
+				if estado == 'crear_cuenta':
+					pantalla.blit(variable2_render,(posx_variable2,posy_variable2))
 				pantalla.blit(variable1_render,(posx_variable1,posy_variable1))
-			
 			pygame.display.flip()
-		while verificador:
-			# if len(nombre_personaje_creado)<3:
-			# 	print language['lang_name_too_short']
-			# 	escribiendo = True
-			# 	nombre_personaje_creado = ''
-			# if nombre_personaje_creado in lista_nombres:
-			# 	print language['lang_name_already_exist']
-			# 	escribiendo = True
-			# 	nombre_personaje_creado = ''
-			# if len(nombre_personaje_creado)>10:
-			# 	print language['lang_name_too_long']
-			# 	escribiendo = True
-			# 	nombre_personaje_creado = ''
-			# if escribiendo == False:
-			# 	escribir    = False
-			verificador = False
-			escribir = False
 	return nombre_personaje_creado
-
-	return
 
 def apretar_mouse_hacer(pantalla,mouspos,user,password,menus):
 	crear_cuenta = False
-	mouseposX = 0
-	mouseposY = 0
+	mouseposX    = 0
+	mouseposY    = 0
 	sesion_iniciada = False
 	if aspect_ratio == '2':
 		mouseposX = 133
@@ -351,16 +348,12 @@ def apretar_mouse_hacer(pantalla,mouspos,user,password,menus):
 		if verificar_usuario_clave(user,password):
 			sesion_iniciada = True
 		else:
-			error = procesar_idioma('lang_user_pass_error',fuente)
-			pantalla.blit(error,(150,100))
+			pantalla.blit(procesar_idioma('lang_user_pass_error',fuente),(150+mouseposX,150+mouseposY))
 	if (291+mouseposX<=mouspos[0]<=510+mouseposX) and (351+mouseposY<=mouspos[1]<=394+mouseposY):
-		print 'crear cuenta'
 		crear_cuenta = True
 	return user,password,sesion_iniciada,crear_cuenta
 
 def blit_selec_pers(pantalla,user,menus): 
-	#seleccion_personajes = pygame.image.load(os.path.join("media","menu","seleccion_personajes.png"))
-	#seleccion_personajes = pygame.transform.scale(seleccion_personajes,(int(800*mult_resolution),int(600*mult_resolution)))
 	lista    			 = []
 	screenX 			 = 0
 	screenY 			 = 0
@@ -373,14 +366,10 @@ def blit_selec_pers(pantalla,user,menus):
 		screenX 		= 133
 		posx_character  = 186
 		posx 			= 178
-		#lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png"))
-		#lateral         = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
 		pantalla.blit(menus[0],(0,0))
 		pantalla.blit(menus[0],(933,0))
-
 	pantalla.blit(menus[2],(screenX,screenY))
 	personajes_cuenta = lista_personajes_cuenta(user)
-	
 	for numerito in personajes_cuenta:
 		file_personajes	= open('personajes.dat')
 		for iteracion in file_personajes:
@@ -422,36 +411,28 @@ def blit_selec_pers(pantalla,user,menus):
 		except:
 			break
 
-	bienvenido_render    = procesar_idioma('lang_welcome_char_selector',fuente_titulo)
-	cerrar_sesion_render = procesar_idioma('lang_close_session',fuente_botones)
-	seleccionar_render   = procesar_idioma('lang_select_botton',fuente_botones)
-	boton_crear_render   = procesar_idioma('lang_make_char_botton',fuente_bonito)
-	pantalla.blit(bienvenido_render,(218,47))
-	pantalla.blit(cerrar_sesion_render,(650,6))
-	pantalla.blit(seleccionar_render,(638,518))
-	pantalla.blit(boton_crear_render,(54,516))
-
+	pantalla.blit(procesar_idioma('lang_close_session',fuente_botones),(650+screenX,6+screenY))
+	pantalla.blit(procesar_idioma('lang_select_botton',fuente_botones),(638+screenX,518+screenY))
+	pantalla.blit(procesar_idioma('lang_make_char_botton',fuente_bonito),(54+screenX,516+screenY))
 	return personajes_cuenta
 
 def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_selected,personajes_cuenta,datos_imagenes,menus):
 	character_selector_menu = True
 	character_creator_menu  = False
-	datos_personaje 		= None
 	juego_loop 				= False
+	datos_personaje 		= None
 	datos_mapa 				= None
 	posicionX 				= None
 	posicionY 				= None
 	mouseposX				= 0
 	mouseposY				= 0
 	enemigos_bliteados 		= []
-
 	if aspect_ratio == '2':
 		mouseposX = 133
 
 	if (646+mouseposX<mouspos[0]<794+mouseposX)and (5+mouseposY<mouspos[1]<41+mouseposY):
 		character_selector_menu = False
 		procesar_idioma('lang_log_out')
-		#print language['lang_log_out']
 	if (45+mouseposX<mouspos[0]<256+mouseposX)and (506+mouseposY<mouspos[1]<560+mouseposY):
 		if '0' in personajes_cuenta:
 			character_creator_menu = True
@@ -459,59 +440,46 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 			blit_perso_selec_creacion(class_selected,pantalla,menus)
 		else:
 			procesar_idioma('lang_all_spaces_full')
-			#print language['lang_all_spaces_full']
-
 	if (53+mouseposX<mouspos[0]<167+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[0]
 		if personajes_cuenta[0] == '0':
 			procesar_idioma('lang_dont_have_char_in_space')
-			#print language['lang_dont_have_char_in_space']
 		else:
 			procesar_idioma('lang_you_choose')
 			print datos_personaje_seleccionado(character_selected)[2]
-			#print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (197+mouseposX<mouspos[0]<311+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[1]
 		if personajes_cuenta[1] == '0':
 			procesar_idioma('lang_dont_have_char_in_space')
-			#print language['lang_dont_have_char_in_space']
 		else:
 			procesar_idioma('lang_you_choose')
 			print datos_personaje_seleccionado(character_selected)[2]
-			#print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (341+mouseposX<mouspos[0]<455+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[2]
 		if personajes_cuenta[2] == '0':
 			procesar_idioma('lang_dont_have_char_in_space')
-			#print language['lang_dont_have_char_in_space']
 		else:
 			procesar_idioma('lang_you_choose')
 			print datos_personaje_seleccionado(character_selected)[2]
-			#print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
-	if (485+mouseposX<mouspos[0]<599+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
+	if (485+mouseposX<mouspos[0]<599+mouseposX) and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[3]
 		if personajes_cuenta[3] == '0':
 			procesar_idioma('lang_dont_have_char_in_space')
-			#print language['lang_dont_have_char_in_space']
 		else:
 			procesar_idioma('lang_you_choose')
 			print datos_personaje_seleccionado(character_selected)[2]
-			#print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 	if (629+mouseposX<mouspos[0]<743+mouseposX)and (173+mouseposY<mouspos[1]<467+mouseposY):
 		character_selected = personajes_cuenta[4]
 		if personajes_cuenta[4] == '0':
 			procesar_idioma('lang_dont_have_char_in_space')
-			#print language['lang_dont_have_char_in_space']
 		else:
 			procesar_idioma('lang_you_choose')
 			print datos_personaje_seleccionado(character_selected)[2]
-			#print language['lang_you_choose']+' '+datos_personaje_seleccionado(character_selected)[2]
 
 	if (626+mouseposX<mouspos[0]<794+mouseposX)and (511+mouseposY<mouspos[1]<555+mouseposY):
 		if character_selected == '0':
 			procesar_idioma('lang_select_a_character')
-			#print language['lang_select_a_character']
-		else:								#pass
+		else:
 			datos_personaje = datos_personaje_seleccionado(character_selected)
 			datos_mapa      = get_datos_mapa(datos_personaje)
 			datos_imagenes  = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa,True)
@@ -525,7 +493,7 @@ def apretar_mouse_character_selector(mouspos,pantalla,class_selected,character_s
 				enemigos_bliteados = blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes)
 	return character_selector_menu,character_creator_menu,character_selected,datos_personaje,juego_loop,datos_mapa,posicionX,posicionY,enemigos_bliteados,datos_imagenes
 
-def get_datos_clases(): # id_clases():
+def get_datos_clases(): 
 	datos_clases    = dict()
 	lista_id_clases = list()
 	arch_clases = open('clases.dat')
@@ -548,25 +516,15 @@ def blit_creac_pers(pantalla,menus):
 	if aspect_ratio=='2':
 		screenX = 133
 		posx    = 169
-		#lateral 		= pygame.image.load(os.path.join("media","menu","lateral.png"))
-		#lateral         = pygame.transform.scale(lateral,(int(133*mult_resolution),int(600*mult_resolution)))
 		pantalla.blit(menus[0],(0,0))
 		pantalla.blit(menus[0],(933,0))
-	#creacion_personaje 	= pygame.image.load(os.path.join("media","menu","creacion_personaje.png"))
-	#creacion_personaje  = pygame.transform.scale(creacion_personaje,(int(800*mult_resolution),int(600*mult_resolution)))
 	pantalla.blit(menus[3],(screenX,screenY))
 	lista_id_clases,datos_clases = get_datos_clases()
-
-	boton_creacion_de    = procesar_idioma('lang_creation_of',fuente_titulo,(63,72,204)) # fuente_titulo.render(language['lang_creation_of'], True, (63,72,204))
-	pantalla.blit(boton_creacion_de,(194,30))
-	boton_personajes     = procesar_idioma('lang_characters',fuente_titulo,(63,72,204)) #fuente_titulo.render(language['lang_characters'], True, (63,72,204))
-	pantalla.blit(boton_personajes,(196,100))
-	boton_crear          = procesar_idioma('lang_make_botton',fuente_botones,(255,174,201)) # fuente_botones_g.render(language['lang_make_botton'], True,(255,174,201))
-	pantalla.blit(boton_crear,(707,549))
-	cerrar_sesion_render = procesar_idioma('lang_close_session',fuente_botones, (239,228,176)) #fuente_botones.render(language['lang_close_session'], True, (239,228,176))
-	pantalla.blit(cerrar_sesion_render,(650,6))
-	volver_render        = procesar_idioma('lang_back',fuente_botones, (153,217,234)) #fuente_botones_g.render(language['lang_back'], True, (153,217,234))
-	pantalla.blit(volver_render,(5,2))
+	pantalla.blit(procesar_idioma('lang_creation_of',fuente_titulo,(63,72,204)),(194+screenX,30+screenY))
+	pantalla.blit(procesar_idioma('lang_characters',fuente_titulo,(63,72,204)) ,(196+screenX,100+screenY))
+	pantalla.blit(procesar_idioma('lang_make_botton',fuente_botones,(255,174,201)) ,(720+screenX,557+screenY))
+	pantalla.blit(procesar_idioma('lang_close_session',fuente_botones, (239,228,176)),(650+screenX,6+screenY))
+	pantalla.blit(procesar_idioma('lang_back',fuente_botones, (153,217,234)),(22+screenX,12+screenY))
 
 	for bliteamiento in lista_id_clases:
 		contador += 1
@@ -587,15 +545,17 @@ def blit_perso_selec_creacion(class_selected,pantalla,menus):
 	datos_clase = get_datos_clases()[1][class_selected]
 	screenX  	= 353
 	screenY 	= 217
+	Xnombre 	= 0
+	Ynombre		= 0
 	if aspect_ratio == '2':
 		screenX = 486
+		Xnombre = 133
 	blit_creac_pers(pantalla,menus)
 	character_class = pygame.image.load(os.path.join("media","menu","class_"+class_selected+"_selection.png")).convert()
 	character_class  = pygame.transform.scale(character_class,(int(115*mult_resolution),int(295*mult_resolution)))
 	character_class.set_colorkey((255,255,255))
 	pantalla.blit(character_class,(screenX,screenY))
-	nombre_clase_render = fuente.render(datos_clase[1], True, (0,0,255))
-	pantalla.blit(nombre_clase_render,(310,550))
+	pantalla.blit(fuente.render(datos_clase[1], True, (0,0,255)),(310+Xnombre,550+Ynombre))
 	return
 
 def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,personajes_cuenta,menus):
@@ -619,85 +579,71 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,persona
 		character_selector_menu = False
 		character_creator_menu  = False
 		procesar_idioma('lang_log_out')
-		#print language['lang_log_out']
 
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[0]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[0]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[1]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[1]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[2]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[2]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (199+mouseposY<mouspos[1]<252+mouseposY):
 		if lista_id_clases[3]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[3]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[4]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[4]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[5]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[5]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[6]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[6]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (258+mouseposY<mouspos[1]<311+mouseposY):
 		if lista_id_clases[7]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[7]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (36+mouseposX<mouspos[0]<89+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[8]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[8]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (95+mouseposX<mouspos[0]<148+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[9]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[9]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (154+mouseposX<mouspos[0]<207+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[10]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[10]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 	elif (213+mouseposX<mouspos[0]<266+mouseposX)and (317+mouseposY<mouspos[1]<370+mouseposY):
 		if lista_id_clases[11]=='0':
 			procesar_idioma('lang_class_dont_exist')
-			#print language['lang_class_dont_exist']
 		class_selected = lista_id_clases[11]
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 
 	elif (703+mouseposX<mouspos[0]<794+mouseposX)and (556+mouseposY<mouspos[1]<594+mouseposY):
 		if class_selected == '0':
 			procesar_idioma('lang_select_a_class')
-			#print language['lang_select_a_class']
 		elif '0' in personajes_cuenta:
 			pygame.display.flip()
 			crear_personaje(pantalla,user,class_selected,menus)
@@ -705,7 +651,6 @@ def apretar_mouse_character_creator(mouspos,pantalla,user,class_selected,persona
 			personajes_cuenta = blit_selec_pers(pantalla,user,menus)
 		else:
 			procesar_idioma('lang_dont_have_free_spaces')
-			#print language['lang_dont_have_free_spaces']
 
 	return personajes_cuenta,class_selected,character_creator_menu,character_selector_menu
 
@@ -718,20 +663,18 @@ def escribir_nombre(pantalla,lista_nombres,class_selected,menus):
 	Ynombre 	= 0
 	if aspect_ratio == '2':
 		Xnombre = 133
-	#mensaje_nombre = pygame.image.load(os.path.join("media","menu","mensaje_nombre.png")).convert()
-	#mensaje_nombre.set_colorkey((255,255,255))
-	escribe_el_render   = procesar_idioma('lang_write_the',fuente_botones, (185,122,87)) #fuente_botones_g.render(language['lang_write_the'], True, (185,122,87))
-	nombre_de_tu_render = procesar_idioma('lang_name_of_your',fuente_botones, (185,122,87)) #fuente_botones_g.render(language['lang_name_of_your'], True, (185,122,87))
-	personaje_render    = procesar_idioma('lang_character',fuente_botones, (185,122,87)) #fuente_botones_g.render(language['lang_character'], True, (185,122,87))
+	escribe_el_render   = procesar_idioma('lang_write_the',fuente_botones, (185,122,87)) 
+	nombre_de_tu_render = procesar_idioma('lang_name_of_your',fuente_botones, (185,122,87))
+	personaje_render    = procesar_idioma('lang_character',fuente_botones, (185,122,87))
 	while escribir:
 		escribiendo = True
 		verificador = True
 		blit_creac_pers(pantalla,menus)
 		blit_perso_selec_creacion(class_selected,pantalla,menus)
 		pantalla.blit(menus[4],(Xnombre,Ynombre))
-		pantalla.blit(escribe_el_render,(333,170))
-		pantalla.blit(nombre_de_tu_render,(333,220))
-		pantalla.blit(personaje_render,(335,275))
+		pantalla.blit(escribe_el_render,(333+Xnombre,170+Ynombre))
+		pantalla.blit(nombre_de_tu_render,(333+Xnombre,220+Ynombre))
+		pantalla.blit(personaje_render,(335+Xnombre,275+Ynombre))
 		while escribiendo:
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN: 
@@ -743,158 +686,152 @@ def escribir_nombre(pantalla,lista_nombres,class_selected,menus):
 							blit_creac_pers(pantalla,menus)
 							blit_perso_selec_creacion(class_selected,pantalla,menus)
 							pantalla.blit(menus[4],(Xnombre,Ynombre))
-							pantalla.blit(escribe_el_render,(333,170))
-							pantalla.blit(nombre_de_tu_render,(333,220))
-							pantalla.blit(personaje_render,(335,275))
-					mods = pygame.key.get_mods()
-					if event.key == pygame.K_0 or event.key == pygame.K_KP0:
-						nombre_personaje_creado += '0'
-					elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
-						nombre_personaje_creado += '1'
-					elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-						nombre_personaje_creado += '2'
-					elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-						nombre_personaje_creado += '3'
-					elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
-						nombre_personaje_creado += '4'
-					elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
-						nombre_personaje_creado += '5'
-					elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
-						nombre_personaje_creado += '6'
-					elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
-						nombre_personaje_creado += '7'
-					elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
-						nombre_personaje_creado += '8'
-					elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
-						nombre_personaje_creado += '9'					
-					if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
-						if event.key == pygame.K_q:
-							nombre_personaje_creado += 'Q'
-						elif event.key == pygame.K_w:
-							nombre_personaje_creado += 'W'
-						elif event.key == pygame.K_e:
-							nombre_personaje_creado += 'E'
-						elif event.key == pygame.K_r:
-							nombre_personaje_creado += 'R'
-						elif event.key == pygame.K_t:
-							nombre_personaje_creado += 'T'
-						elif event.key == pygame.K_y:
-							nombre_personaje_creado += 'Y'
-						elif event.key == pygame.K_u:
-							nombre_personaje_creado += 'U'
-						elif event.key == pygame.K_i:
-							nombre_personaje_creado += 'I'
-						elif event.key == pygame.K_o:
-							nombre_personaje_creado += 'O'
-						elif event.key == pygame.K_p:
-							nombre_personaje_creado += 'P'
-						elif event.key == pygame.K_a:
-							nombre_personaje_creado += 'A'
-						elif event.key == pygame.K_s:
-							nombre_personaje_creado += 'S'
-						elif event.key == pygame.K_d:
-							nombre_personaje_creado += 'D'
-						elif event.key == pygame.K_f:
-							nombre_personaje_creado += 'F'
-						elif event.key == pygame.K_g:
-							nombre_personaje_creado += 'G'
-						elif event.key == pygame.K_h:
-							nombre_personaje_creado += 'H'
-						elif event.key == pygame.K_j:
-							nombre_personaje_creado += 'J'
-						elif event.key == pygame.K_k:
-							nombre_personaje_creado += 'K'
-						elif event.key == pygame.K_l:
-							nombre_personaje_creado += 'L'
-						elif event.key == pygame.K_z:
-							nombre_personaje_creado += 'Z'
-						elif event.key == pygame.K_x:
-							nombre_personaje_creado += 'X'
-						elif event.key == pygame.K_c:
-							nombre_personaje_creado += 'C'
-						elif event.key == pygame.K_v:
-							nombre_personaje_creado += 'V'
-						elif event.key == pygame.K_b:
-							nombre_personaje_creado += 'B'
-						elif event.key == pygame.K_n:
-							nombre_personaje_creado += 'N'
-						elif event.key == pygame.K_m:
-							nombre_personaje_creado += 'M'
-					else:
-						if event.key == pygame.K_q:
-							nombre_personaje_creado += 'q'
-						elif event.key == pygame.K_w:
-							nombre_personaje_creado += 'w'
-						elif event.key == pygame.K_e:
-							nombre_personaje_creado += 'e'
-						elif event.key == pygame.K_r:
-							nombre_personaje_creado += 'r'
-						elif event.key == pygame.K_t:
-							nombre_personaje_creado += 't'
-						elif event.key == pygame.K_y:
-							nombre_personaje_creado += 'y'
-						elif event.key == pygame.K_u:
-							nombre_personaje_creado += 'u'
-						elif event.key == pygame.K_i:
-							nombre_personaje_creado += 'i'
-						elif event.key == pygame.K_o:
-							nombre_personaje_creado += 'o'
-						elif event.key == pygame.K_p:
-							nombre_personaje_creado += 'p'
-						elif event.key == pygame.K_a:
-							nombre_personaje_creado += 'a'
-						elif event.key == pygame.K_s:
-							nombre_personaje_creado += 's'
-						elif event.key == pygame.K_d:
-							nombre_personaje_creado += 'd'
-						elif event.key == pygame.K_f:
-							nombre_personaje_creado += 'f'
-						elif event.key == pygame.K_g:
-							nombre_personaje_creado += 'g'
-						elif event.key == pygame.K_h:
-							nombre_personaje_creado += 'h'
-						elif event.key == pygame.K_j:
-							nombre_personaje_creado += 'j'
-						elif event.key == pygame.K_k:
-							nombre_personaje_creado += 'k'
-						elif event.key == pygame.K_l:
-							nombre_personaje_creado += 'l'
-						elif event.key == pygame.K_z:
-							nombre_personaje_creado += 'z'
-						elif event.key == pygame.K_x:
-							nombre_personaje_creado += 'x'
-						elif event.key == pygame.K_c:
-							nombre_personaje_creado += 'c'
-						elif event.key == pygame.K_v:
-							nombre_personaje_creado += 'v'
-						elif event.key == pygame.K_b:
-							nombre_personaje_creado += 'b'
-						elif event.key == pygame.K_n:
-							nombre_personaje_creado += 'n'
-						elif event.key == pygame.K_m:
-							nombre_personaje_creado += 'm'
-					if event.key == pygame.K_SPACE:
-						nombre_personaje_creado += ' '
-					elif event.key == pygame.K_PERIOD:
-						nombre_personaje_creado += '.'
+							pantalla.blit(escribe_el_render,(333+Xnombre,170+Ynombre))
+							pantalla.blit(nombre_de_tu_render,(333+Xnombre,220+Ynombre))
+							pantalla.blit(personaje_render,(335+Xnombre,275+Ynombre))
+					if len(nombre_personaje_creado) <= 11:
+						mods = pygame.key.get_mods()
+						if event.key == pygame.K_0 or event.key == pygame.K_KP0:
+							nombre_personaje_creado += '0'
+						elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
+							nombre_personaje_creado += '1'
+						elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
+							nombre_personaje_creado += '2'
+						elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
+							nombre_personaje_creado += '3'
+						elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
+							nombre_personaje_creado += '4'
+						elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
+							nombre_personaje_creado += '5'
+						elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
+							nombre_personaje_creado += '6'
+						elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
+							nombre_personaje_creado += '7'
+						elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
+							nombre_personaje_creado += '8'
+						elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
+							nombre_personaje_creado += '9'					
+						if (mods & KMOD_CAPS) or (mods & KMOD_LSHIFT) or (mods & KMOD_RSHIFT): 
+							if event.key == pygame.K_q:
+								nombre_personaje_creado += 'Q'
+							elif event.key == pygame.K_w:
+								nombre_personaje_creado += 'W'
+							elif event.key == pygame.K_e:
+								nombre_personaje_creado += 'E'
+							elif event.key == pygame.K_r:
+								nombre_personaje_creado += 'R'
+							elif event.key == pygame.K_t:
+								nombre_personaje_creado += 'T'
+							elif event.key == pygame.K_y:
+								nombre_personaje_creado += 'Y'
+							elif event.key == pygame.K_u:
+								nombre_personaje_creado += 'U'
+							elif event.key == pygame.K_i:
+								nombre_personaje_creado += 'I'
+							elif event.key == pygame.K_o:
+								nombre_personaje_creado += 'O'
+							elif event.key == pygame.K_p:
+								nombre_personaje_creado += 'P'
+							elif event.key == pygame.K_a:
+								nombre_personaje_creado += 'A'
+							elif event.key == pygame.K_s:
+								nombre_personaje_creado += 'S'
+							elif event.key == pygame.K_d:
+								nombre_personaje_creado += 'D'
+							elif event.key == pygame.K_f:
+								nombre_personaje_creado += 'F'
+							elif event.key == pygame.K_g:
+								nombre_personaje_creado += 'G'
+							elif event.key == pygame.K_h:
+								nombre_personaje_creado += 'H'
+							elif event.key == pygame.K_j:
+								nombre_personaje_creado += 'J'
+							elif event.key == pygame.K_k:
+								nombre_personaje_creado += 'K'
+							elif event.key == pygame.K_l:
+								nombre_personaje_creado += 'L'
+							elif event.key == pygame.K_z:
+								nombre_personaje_creado += 'Z'
+							elif event.key == pygame.K_x:
+								nombre_personaje_creado += 'X'
+							elif event.key == pygame.K_c:
+								nombre_personaje_creado += 'C'
+							elif event.key == pygame.K_v:
+								nombre_personaje_creado += 'V'
+							elif event.key == pygame.K_b:
+								nombre_personaje_creado += 'B'
+							elif event.key == pygame.K_n:
+								nombre_personaje_creado += 'N'
+							elif event.key == pygame.K_m:
+								nombre_personaje_creado += 'M'
+						else:
+							if event.key == pygame.K_q:
+								nombre_personaje_creado += 'q'
+							elif event.key == pygame.K_w:
+								nombre_personaje_creado += 'w'
+							elif event.key == pygame.K_e:
+								nombre_personaje_creado += 'e'
+							elif event.key == pygame.K_r:
+								nombre_personaje_creado += 'r'
+							elif event.key == pygame.K_t:
+								nombre_personaje_creado += 't'
+							elif event.key == pygame.K_y:
+								nombre_personaje_creado += 'y'
+							elif event.key == pygame.K_u:
+								nombre_personaje_creado += 'u'
+							elif event.key == pygame.K_i:
+								nombre_personaje_creado += 'i'
+							elif event.key == pygame.K_o:
+								nombre_personaje_creado += 'o'
+							elif event.key == pygame.K_p:
+								nombre_personaje_creado += 'p'
+							elif event.key == pygame.K_a:
+								nombre_personaje_creado += 'a'
+							elif event.key == pygame.K_s:
+								nombre_personaje_creado += 's'
+							elif event.key == pygame.K_d:
+								nombre_personaje_creado += 'd'
+							elif event.key == pygame.K_f:
+								nombre_personaje_creado += 'f'
+							elif event.key == pygame.K_g:
+								nombre_personaje_creado += 'g'
+							elif event.key == pygame.K_h:
+								nombre_personaje_creado += 'h'
+							elif event.key == pygame.K_j:
+								nombre_personaje_creado += 'j'
+							elif event.key == pygame.K_k:
+								nombre_personaje_creado += 'k'
+							elif event.key == pygame.K_l:
+								nombre_personaje_creado += 'l'
+							elif event.key == pygame.K_z:
+								nombre_personaje_creado += 'z'
+							elif event.key == pygame.K_x:
+								nombre_personaje_creado += 'x'
+							elif event.key == pygame.K_c:
+								nombre_personaje_creado += 'c'
+							elif event.key == pygame.K_v:
+								nombre_personaje_creado += 'v'
+							elif event.key == pygame.K_b:
+								nombre_personaje_creado += 'b'
+							elif event.key == pygame.K_n:
+								nombre_personaje_creado += 'n'
+							elif event.key == pygame.K_m:
+								nombre_personaje_creado += 'm'
+						if event.key == pygame.K_SPACE:
+							nombre_personaje_creado += ' '
+						elif event.key == pygame.K_PERIOD:
+							nombre_personaje_creado += '.'
 				nombre_personaje_render = fuente.render(nombre_personaje_creado, True, (0,0,255))
-				pantalla.blit(nombre_personaje_render,(320,490))		
+				pantalla.blit(nombre_personaje_render,(315+Xnombre,494+Ynombre))		
 			
 			pygame.display.flip()
 		while verificador:
 			if len(nombre_personaje_creado)<3:
 				procesar_idioma('lang_name_too_short')
-				#print language['lang_name_too_short']
 				escribiendo = True
 				nombre_personaje_creado = ''
 			if nombre_personaje_creado in lista_nombres:
 				procesar_idioma('lang_name_already_exist')
-				#print language['lang_name_already_exist']
-				escribiendo = True
-				nombre_personaje_creado = ''
-			if len(nombre_personaje_creado)>10:
-				procesar_idioma('lang_name_too_long')
-				#print language['lang_name_too_long']
 				escribiendo = True
 				nombre_personaje_creado = ''
 			if escribiendo == False:
@@ -976,7 +913,6 @@ def get_datos_mapa(datos_personaje):
 def importar_imagenes(datos_imagenes,datos_personaje,datos_mapa,cambiar_personaje):
 	if datos_imagenes == None:
 		procesar_idioma('lang_loading_images')
-		#print language['lang_loading_images']
 		datos_lateral     = list()
 		imagenes_enemigos = list()
 		# [hud,mapa_image,cuadricula,datos_lateral,cuadricula_lateral,personajerl,cerrar_x,estrella,bloqued,pausa,imagenes_enemigos,negro,blanco]
@@ -1215,8 +1151,7 @@ def blitear_datos_mapa(pantalla,datos_mapa,datos_imagenes):
 				posx += 133
 			pantalla.blit(datos_imagenes[7],(posx,posy))
 
-		if debug_mode:
-			## blitear reestricciones de movimiento	
+		if debug_mode:	
 			if celdas=='265':
 				celdas_bloquedas = datos_mapa[celdas].strip().split(';')
 				for n_celda_bloqueda in celdas_bloquedas:
@@ -1255,7 +1190,6 @@ def mover_personaje(pantalla,posx,posy,direX,direY,datos_mapa,datos_personaje,en
 
 	if debug_mode:
 		procesar_idioma('lang_cell')
-	 	#print language['lang_cell']+
 	 	print celda_number
 	 	print 'posx:',posx+direX,' posy:',posy+direY
 
@@ -1271,7 +1205,6 @@ def mover_personaje(pantalla,posx,posy,direX,direY,datos_mapa,datos_personaje,en
 	colision_pj_mob,info_enemigo = colision_jugador_monster(posx,posy,enemigos_bliteados)
 	if colision_pj_mob and debug_mode:
 		procesar_idioma('lang_pj_mob_same_cell')
-		#print language['lang_pj_mob_same_cell']
 	if colision_pj_mob == False:
 		datos_personaje,datos_mapa,posx,posy,enemigos_bliteados = cambiar_mapa(pantalla,posx,posy,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 	return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo
@@ -1282,17 +1215,13 @@ def bliteo_salir_x(pantalla,datos_imagenes):
 	if aspect_ratio == '2':
 		screenX = 133
 	pantalla.blit(datos_imagenes[6],(screenX,screenY))
-	seguro_salir_render = procesar_idioma('lang_sure_want_exit',fuente_botones, (185,122,87)) #fuente_botones_g.render(language['lang_sure_want_exit'], True, (185,122,87))
-	pantalla.blit(seguro_salir_render,(208,125))
-	si_render = procesar_idioma('lang_yes',fuente_botones_xl, (185,122,87)) #fuente_botones_xl.render(language['lang_yes'], True, (185,122,87))
-	pantalla.blit(si_render,(230,218))
-	no_render = procesar_idioma('lang_no',fuente_botones_xl, (185,122,87)) #fuente_botones_xl.render(language['lang_no'], True, (185,122,87))
-	pantalla.blit(no_render,(475,218))
+	pantalla.blit(procesar_idioma('lang_sure_want_exit',fuente_botones, (185,122,87)),(240+screenX,125+screenY))
+	pantalla.blit(procesar_idioma('lang_yes',fuente_botones_xl, (185,122,87)),(230+screenX,218+screenY))
+	pantalla.blit(procesar_idioma('lang_no',fuente_botones_xl, (185,122,87)),(475+screenX,218+screenY))
 	return
 
 def guardar_datos_personaje(datos_personaje,posx,posy):
 	procesar_idioma('lang_saving_data')
-	#print language['lang_saving_data']
 
 	datos_personaje[6],problemas = get_celda_number(posx,posy)
 	datos_personaje[6] = str(datos_personaje[6])
@@ -1322,10 +1251,8 @@ def guardar_datos_personaje(datos_personaje,posx,posy):
 
 	if problemas:
 		procesar_idioma('lang_saving_error')
-		#print language['lang_saving_error']
 	else:
 		procesar_idioma('lang_saving_successful')
-		#print language['lang_saving_successful']
 	return
 
 def blit_pausa(pantalla,datos_imagenes):
@@ -1334,16 +1261,11 @@ def blit_pausa(pantalla,datos_imagenes):
 	if aspect_ratio == '2':
 		screenX = 133
 	pantalla.blit(datos_imagenes[9],(screenX,screenY))
-	reanudar_render = procesar_idioma('lang_back_to_game_botton',fuente_botones, (127,127,127)) #fuente_botones.render(language['lang_back_to_game_botton'], True, (127,127,127))
-	pantalla.blit(reanudar_render,(300,126))
-	reanudar_render = procesar_idioma('lang_save_data',fuente_botones, (127,127,127)) #fuente_botones.render(language['lang_save_data'], True, (127,127,127))
-	pantalla.blit(reanudar_render,(295,173))
-	reanudar_render = procesar_idioma('lang_options_botton',fuente_botones, (127,127,127)) #fuente_botones.render(language['lang_options_botton'], True, (127,127,127))
-	pantalla.blit(reanudar_render,(295,215))
-	reanudar_render = procesar_idioma('lang_change_of_character',fuente_botones, (127,127,127)) #fuente_botones.render(language['lang_change_of_character'], True, (127,127,127))
-	pantalla.blit(reanudar_render,(291,258))
-	reanudar_render = procesar_idioma('lang_exit_botton',fuente_botones, (127,127,127)) #fuente_botones.render(language['lang_exit_botton'], True, (127,127,127))
-	pantalla.blit(reanudar_render,(296,301))
+	pantalla.blit(procesar_idioma('lang_back_to_game_botton',fuente_botones, (127,127,127)),(300,126))
+	pantalla.blit(procesar_idioma('lang_save_data',fuente_botones, (127,127,127)),(295,173))
+	pantalla.blit(procesar_idioma('lang_options_botton',fuente_botones, (127,127,127)),(295,215))
+	pantalla.blit(procesar_idioma('lang_change_of_character',fuente_botones, (127,127,127)),(291,258))
+	pantalla.blit(procesar_idioma('lang_exit_botton',fuente_botones, (127,127,127)),(296,301))
 	return
 
 def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,direX,direY,datos_mapa,user,personajes_cuenta,enemigos_bliteados,datos_imagenes):
@@ -1370,7 +1292,6 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 		pausa 					= False 
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (298+mouseposY<mouspos[1]<336+mouseposY): #salir
 		procesar_idioma('lang_log_out')
-		#print language['lang_log_out']
 		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
 		character_selector_menu = False
 		juego_loop 				= False
@@ -1420,7 +1341,6 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				posx += 133
 			if posicionX == posx and posicionY == posy:
 				procesar_idioma('lang_loading_map')
-				#print language['lang_loading_map']
 				#time.sleep(0.5)
 				datos_celda			= datos_mapa[celdas].split(';')
 				nueva_celda         = datos_celda[1]
@@ -1429,7 +1349,6 @@ def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigo
 				if debug_mode:
 					procesar_idioma('lang_map')
 					print datos_personaje[5]
-					#print language['lang_map']+': '+datos_personaje[5]
 				datos_mapa     = get_datos_mapa(datos_personaje)
 				datos_imagenes = importar_imagenes(datos_imagenes,datos_personaje,datos_mapa,False)
 				blit_mapa(pantalla,datos_imagenes)
@@ -1480,12 +1399,10 @@ def blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes):
 				if debug_mode:
 					procesar_idioma('lang_bloqued_cell')
 					print celda_enemigo
-					#print language['lang_bloqued_cell']+': '+celda_enemigo
 				celda_enemigo = str(random.randint(0,263))
 			if debug_mode:
 				procesar_idioma('lang_enemy_cell')
 				print celda_enemigo
-				#print language['lang_enemy_cell']+': '+celda_enemigo
 			posx,posy = get_celdas_pos(celda_enemigo)
 			if aspect_ratio == '2':
 				posx += 133
@@ -1497,7 +1414,6 @@ def blit_monster(pantalla,datos_mapa,posicionX,posicionY,datos_imagenes):
 			pass
 	if debug_mode:
 		procesar_idioma('lang_blitted_mobs')
-		#print language['lang_blitted_mobs']+':'
 		print enemigos_bliteados
 	return enemigos_bliteados
 
@@ -1554,78 +1470,106 @@ def colision_jugador_monster(posx,posy,enemigos_bliteados):
 	return False,None
 
 def animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacion_number,datos_imagenes):
-	#animacion_number = 2
-	pantalla.blit(datos_imagenes[11],(0,0))
-	if animacion_number == 1:
+	#animacion_number = 3
+	if animacion_number == 1 or animacion_number == 2:
+		pantalla.blit(datos_imagenes[11],(0,0))
+		if animacion_number == 1:
+			if aspect_ratio == '2':
+				valor = int(2*(120.0/FPS))
+				if valor < 1:
+					valor = 1
+				screenY += valor
+			else:
+				valor = int(2*(120.0/FPS))
+				if valor < 1:
+					valor = 1
+				screenY += valor
+		elif animacion_number == 2:
+			valor = int(3*(120.0/FPS))
+			if valor < 1:
+				valor = 1
+			screenX -= valor
+			if aspect_ratio == '2':
+				valor = int(4*(120.0/FPS))
+				if valor < 1:
+					valor = 1
+				screenY += valor
+			else:
+				valor = int(2*(120.0/FPS))
+				if valor < 1:
+					valor = 1
+				screenY += int(2*(120.0/FPS))
+			
 		if aspect_ratio == '2':
-			valor = int(2*(120.0/FPS))
+			datos_lateral = datos_imagenes[3]
+			pantalla.blit(datos_imagenes[11],(600,0))
+			if '272' in datos_mapa:
+				pantalla.blit(datos_lateral[0],(-800+screenX,448+screenY))
+				pantalla.blit(datos_imagenes[4],(-800+screenX,450+screenY))
+			else:
+				pantalla.blit(datos_lateral[0],(-133+screenX,448+screenY))
+			if '273' in  datos_mapa:
+				pantalla.blit(datos_lateral[1],(800+screenX,448+screenY))
+				pantalla.blit(datos_imagenes[4],(800+screenX,450+screenY))
+			else:
+				pantalla.blit(datos_lateral[1],(800+screenX,448+screenY))
+			if '270' in  datos_mapa:
+				pantalla.blit(datos_lateral[2],(-800+screenX,0+screenY))
+				pantalla.blit(datos_imagenes[4],(-800+screenX,0+screenY))
+			else:
+				pantalla.blit(datos_lateral[2],(-133+screenX,0+screenY))
+			if '271' in  datos_mapa:
+				pantalla.blit(datos_lateral[3],(800+screenX,0+screenY))
+				pantalla.blit(datos_imagenes[4],(800+screenX,0+screenY))
+			else:
+				pantalla.blit(datos_lateral[3],(800+screenX,0+screenY))
+
+		pantalla.blit(datos_imagenes[0],(screenX,screenY))
+		pantalla.blit(datos_imagenes[1],(screenX,screenY))
+		pantalla.blit(datos_imagenes[2],(screenX,screenY))
+
+		imagenes_enemigos = datos_imagenes[10]
+		for imagen_enemigo_blitear,id_enemigo_blitear in imagenes_enemigos:
+			if id_enemigo_blitear == info_enemigo[1]:
+				break
+		posx,posy = get_celdas_pos(info_enemigo[0])
+		posx += screenX
+		posy += screenY
+		pantalla.blit(imagen_enemigo_blitear,(posx,posy))
+		pantalla.blit(datos_imagenes[5],(posx,posy))
+
+		if screenY > 600:
+			if aspect_ratio == '2':
+				return 133,0,False,0
+			return 0,0,False,0
+
+	elif animacion_number == 3:
+		if screenY < 600:
+			valor = int(6*(120.0/FPS))
 			if valor < 1:
 				valor = 1
 			screenY += valor
-		else:
-			valor = int(2*(120.0/FPS))
+			pantalla.blit(datos_imagenes[11],(screenX-500,screenY-600))
+		if screenY >= 600 and screenX < 500:
+			valor = int(6*(120.0/FPS))
 			if valor < 1:
 				valor = 1
-			screenY += valor
-	elif animacion_number == 2:
-		valor = int(3*(120.0/FPS))
-		if valor < 1:
-			valor = 1
-		screenX -= valor
-		if aspect_ratio == '2':
-			valor = int(4*(120.0/FPS))
+			screenX += valor
+			pantalla.blit(datos_imagenes[11],(screenX-500,screenY-200))
+		if screenX >= 500:
+			#print screenY
+			pantalla.blit(datos_imagenes[11],(screenX,screenY-200))
+			valor = int(6*(120.0/FPS))
 			if valor < 1:
 				valor = 1
-			screenY += valor
-		else:
-			valor = int(2*(120.0/FPS))
-			if valor < 1:
-				valor = 1
-			screenY += int(2*(120.0/FPS))
-
-	if aspect_ratio == '2':
-		datos_lateral = datos_imagenes[3]
-		pantalla.blit(datos_imagenes[11],(600,0))
-		if '272' in datos_mapa:
-			pantalla.blit(datos_lateral[0],(-800+screenX,448+screenY))
-			pantalla.blit(datos_imagenes[4],(-800+screenX,450+screenY))
-		else:
-			pantalla.blit(datos_lateral[0],(-133+screenX,448+screenY))
-		if '273' in  datos_mapa:
-			pantalla.blit(datos_lateral[1],(800+screenX,448+screenY))
-			pantalla.blit(datos_imagenes[4],(800+screenX,450+screenY))
-		else:
-			pantalla.blit(datos_lateral[1],(800+screenX,448+screenY))
-		if '270' in  datos_mapa:
-			pantalla.blit(datos_lateral[2],(-800+screenX,0+screenY))
-			pantalla.blit(datos_imagenes[4],(-800+screenX,0+screenY))
-		else:
-			pantalla.blit(datos_lateral[2],(-133+screenX,0+screenY))
-		if '271' in  datos_mapa:
-			pantalla.blit(datos_lateral[3],(800+screenX,0+screenY))
-			pantalla.blit(datos_imagenes[4],(800+screenX,0+screenY))
-		else:
-			pantalla.blit(datos_lateral[3],(800+screenX,0+screenY))
-
-	pantalla.blit(datos_imagenes[0],(screenX,screenY))
-	pantalla.blit(datos_imagenes[1],(screenX,screenY))
-	pantalla.blit(datos_imagenes[2],(screenX,screenY))
-
-	imagenes_enemigos = datos_imagenes[10]
-	for imagen_enemigo_blitear,id_enemigo_blitear in imagenes_enemigos:
-		if id_enemigo_blitear == info_enemigo[1]:
-			break
-	posx,posy = get_celdas_pos(info_enemigo[0])
-	posx += screenX
-	posy += screenY
-	pantalla.blit(imagen_enemigo_blitear,(posx,posy))
-	pantalla.blit(datos_imagenes[5],(posx,posy))
-
-	if screenY > 600:
-		if aspect_ratio == '2':
-			return 133,0,False,0
-		return 0,0,False,0
-
+			screenY -= valor
+			print screenY
+			#print screenX
+			#print screenY-200
+		#if screenY > 600:
+		#	if aspect_ratio == '2':
+		#		return 133,0,False,0
+		#	return 0,0,False,0
 	return screenX,screenY,True,animacion_number
 
 def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje,datos_imagenes):##terminar
@@ -1678,7 +1622,6 @@ def mover_pj_en_pelea(pantalla,posx_pj,posy_pj,direX,direY,datos_personaje,datos
 	if debug_mode:
 	 	procesar_idioma('lang_cell')
 	 	print get_celda_number(posx_pj,posy_pj)[0]
-	 	#print language['lang_cell']+': '+get_celda_number(posx_pj,posy_pj)[0]
 	 	print 'posx:',posx_pj,' posy:',posy_pj
 
 	blit_mapa(pantalla,datos_imagenes)
