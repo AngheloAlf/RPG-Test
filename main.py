@@ -57,8 +57,10 @@ character_creator_menu  = False
 juego_loop 				= False
 pausa 					= False
 pelea 					= False
+opciones 				= False
 class_selected          = '0'
 character_selected 		= '0'
+animaciones_pelea 		= (1,2,3)
 reproducir_musica		= False
 enemigos_bliteados		= []
 colision_pj_mob 		= False
@@ -197,8 +199,8 @@ while hacer:
 					milliseconds = clock.tick(FPS)
 				if show_FPS:
 					pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
-
 				mouspos = pygame.mouse.get_pos()
+
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
 						bliteo_salir_x(pantalla,datos_imagenes)
@@ -211,7 +213,7 @@ while hacer:
 							if show_FPS:
 								pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 							mouspos = pygame.mouse.get_pos()
-							character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes)
+							character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones = while_cerrar(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes,opciones)
 							pygame.display.flip()
 							
 					elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -251,7 +253,7 @@ while hacer:
 					pelea             = True
 					colision_pj_mob   = False
 					blit_animacion    = True
-					animacion_number  = random.randint(1,2)
+					animacion_number  = random.choice(animaciones_pelea)
 
 				while pausa:
 					if enable_busy_loop:
@@ -260,8 +262,8 @@ while hacer:
 						milliseconds = clock.tick(FPS)
 					if show_FPS:
 						pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
-
 					mouspos = pygame.mouse.get_pos()
+
 					for event in pygame.event.get():
 						if event.type == pygame.QUIT:
 							bliteo_salir_x(pantalla,datos_imagenes)
@@ -274,7 +276,7 @@ while hacer:
 								if show_FPS:
 									pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 								mouspos = pygame.mouse.get_pos()
-								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea  = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes)
+								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones  = while_cerrar(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes,opciones)
 								pygame.display.flip()
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							if pygame.mouse.get_pressed()[0]==True:
@@ -282,8 +284,43 @@ while hacer:
 						elif event.type == pygame.KEYDOWN:
 							if event.key == pygame.K_p:
 								print 'while_pausa'
+				
+					while opciones:
+						break
+						if enable_busy_loop:
+							milliseconds = clock.tick_busy_loop(FPS)
+						else:
+							milliseconds = clock.tick(FPS)
+						if show_FPS:
+							pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+						mouspos = pygame.mouse.get_pos()
+						
+						for event in pygame.event.get():
+							if event.type == pygame.QUIT:
+								bliteo_salir_x(pantalla,datos_imagenes)
+								cerrar = True
+								while cerrar:
+									if enable_busy_loop:
+										milliseconds = clock.tick_busy_loop(FPS)
+									else:
+										milliseconds = clock.tick(FPS)
+									if show_FPS:
+										pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
+									mouspos = pygame.mouse.get_pos()
+									character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones = while_cerrar(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes,opciones)
+									pygame.display.flip()
+							elif event.type == pygame.MOUSEBUTTONDOWN:
+								if pygame.mouse.get_pressed()[0]==True:
+									pass
+									#posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu = apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,datos_mapa,user,personajes_cuenta,enemigos_bliteados,datos_imagenes)
+							elif event.type == pygame.KEYDOWN:
+								if event.key == pygame.K_p:
+									print 'while_opciones'
+						pygame.display.flip()
 					pygame.display.flip()
-				cancion = random.choice(battle_music.keys())
+				
+				if pelea:
+					cancion = random.choice(battle_music.keys())
 				while pelea:
 					if enable_busy_loop:
 						milliseconds = clock.tick_busy_loop(FPS)
@@ -336,8 +373,11 @@ while hacer:
 								if show_FPS:
 									pygame.display.set_caption("{0} | FPS: {1}".format(Titulo,round(clock.get_fps(),2)))
 								mouspos = pygame.mouse.get_pos()
-								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea = while_cerrar(pygame.event.get(),pygame.mouse.get_pressed(),mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes)
+								character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones = while_cerrar(mouspos,pantalla,datos_personaje,posicionX,posicionY,0,0,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes,opciones)
 								pygame.display.flip()
+							posx_pj,posy_pj = get_celdas_pos(celda_pj_pelea)
+							mover_pj_en_pelea(pantalla,posx_pj,posy_pj,0,0,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+							#pygame.display.flip()
 								
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							if pygame.mouse.get_pressed()[0]==True:

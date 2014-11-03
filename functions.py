@@ -1148,6 +1148,7 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 		posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)							
 		pausa = False
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (213+mouseposY<mouspos[1]<255+mouseposY): #opciones
+		print 'Opciones [WIP]'
 		pass
 	elif (285+mouseposX<mouspos[0]<513+mouseposX) and (258+mouseposY<mouspos[1]<292+mouseposY): #cambiar de personajes
 		guardar_datos_personaje(datos_personaje,posicionX,posicionY)
@@ -1164,7 +1165,10 @@ def apretar_mouse_pausa(mouspos,pantalla,datos_personaje,posicionX,posicionY,dir
 
 	return posicionX,posicionY,datos_personaje,datos_mapa,pausa,personajes_cuenta,juego_loop,character_selector_menu
 
-def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes):
+def apretar_mouse_opciones(mouspos):
+	return
+
+def while_cerrar(mouspos,pantalla,datos_personaje,posx,posy,direX,direY,pausa,datos_mapa,enemigos_bliteados,pelea,datos_imagenes,opciones):
 	character_selector_menu = True
 	juego_loop 				= True
 	cerrar 					= True
@@ -1172,9 +1176,9 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 	mouseposY 				= 0
 	if aspect_ratio == '2':
 		mouseposX = 133
-	for event in eventos_pygame:
+	for event in pygame.event.get():
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if mouse_apretado[0]==True:
+			if pygame.mouse.get_pressed()[0]==True:
 				if (220+mouseposX<mouspos[0]<343+mouseposX)and (210+mouseposY<mouspos[1]<320+mouseposY):
 					procesar_idioma('lang_log_out')
 					#print language['lang_log_out']
@@ -1184,18 +1188,20 @@ def while_cerrar(eventos_pygame,mouse_apretado,mouspos,pantalla,datos_personaje,
 					cerrar 					= False
 					pausa 					= False
 					pelea 					= False
-					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
+					opciones 				= False
+					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones
 				elif (441+mouseposX<mouspos[0]<580+mouseposX)and (209+mouseposY<mouspos[1]<320+mouseposY):
-					cerrar = False
-					pausa  = False
+					cerrar   = False
+					pausa    = False
+					opciones = False
 					posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posx,posy,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
-					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
+					return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones
 		elif event.type == pygame.KEYDOWN: ##apretar boton
 			if event.key == pygame.K_ESCAPE: 
 				cerrar = False
 				posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posx,posy,0,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
-				return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea
-	return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea 
+				return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones
+	return character_selector_menu,juego_loop,cerrar,pausa,enemigos_bliteados,pelea,opciones
 
 def cambiar_mapa(pantalla,posicionX,posicionY,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes):
 	for celdas in datos_mapa:
@@ -1354,7 +1360,7 @@ def animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacio
 				valor = 1
 			screenX -= valor
 			if aspect_ratio == '2':
-				valor = int(4*(120.0/FPS))
+				valor = int(3*(120.0/FPS))
 				if valor < 1:
 					valor = 1
 				screenY += valor
@@ -1408,32 +1414,50 @@ def animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacio
 			return 0,0,False,0
 
 	elif animacion_number == 3:
-		if screenY < 600:
+		if aspect_ratio == '2':
 			valor = int(6*(120.0/FPS))
 			if valor < 1:
 				valor = 1
-			screenY += valor
-			pantalla.blit(datos_imagenes[11],(screenX-500,screenY-600))
-		if screenY >= 600 and screenX < 500:
+			if screenY <= 200 and screenX >= 300:
+				screenX -= valor
+				pantalla.blit(datos_imagenes[11],(screenX+66,screenY-600))
+				
+			elif screenX >= 500: ##arriba
+				#print screenY
+				
+				screenY -= valor
+				pantalla.blit(datos_imagenes[11],(screenX+66,screenY-200))
+			elif screenY < 600: ##abajo
+				
+				screenY += valor
+				pantalla.blit(datos_imagenes[11],(screenX-566,screenY-600))
+			elif screenY >= 600 and screenX < 500:##derecha
+				
+				screenX += valor
+				pantalla.blit(datos_imagenes[11],(screenX-566,screenY-200))
+
+		else:
 			valor = int(6*(120.0/FPS))
 			if valor < 1:
 				valor = 1
-			screenX += valor
-			pantalla.blit(datos_imagenes[11],(screenX-500,screenY-200))
-		if screenX >= 500:
-			#print screenY
-			pantalla.blit(datos_imagenes[11],(screenX,screenY-200))
-			valor = int(6*(120.0/FPS))
-			if valor < 1:
-				valor = 1
-			screenY -= valor
-			print screenY
-			#print screenX
-			#print screenY-200
-		#if screenY > 600:
-		#	if aspect_ratio == '2':
-		#		return 133,0,False,0
-		#	return 0,0,False,0
+			if screenY <= 200 and screenX >= 300:
+				screenX -= valor
+				pantalla.blit(datos_imagenes[11],(screenX,screenY-600))
+				
+			elif screenX >= 500: ##arriba
+				#print screenY
+				
+				screenY -= valor
+				pantalla.blit(datos_imagenes[11],(screenX,screenY-200))
+			elif screenY < 600: ##abajo
+				
+				screenY += valor
+				pantalla.blit(datos_imagenes[11],(screenX-500,screenY-600))
+			elif screenY >= 600 and screenX < 500:##derecha
+				
+				screenX += valor
+				pantalla.blit(datos_imagenes[11],(screenX-500,screenY-200))
+
 	return screenX,screenY,True,animacion_number
 
 def blit_pj_mob_en_pelea(pantalla,datos_mapa,info_enemigo,datos_personaje,datos_imagenes):##terminar
