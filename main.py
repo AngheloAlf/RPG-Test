@@ -224,18 +224,27 @@ while hacer:
 							blit_pausa(pantalla,datos_imagenes) 
 							pausa = True
 
-						if event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+						if event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_w or event.key == pygame.K_q or event.key == pygame.K_a or event.key == pygame.K_s:
 							mover_enemigo = random.randint(1,10)
 							if mover_enemigo != 9 and mover_enemigo != 10:
 								enemigos_bliteados = mover_monster(pantalla,enemigos_bliteados,datos_mapa)
 
 						if event.key == pygame.K_UP:
-							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,25,-25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,0,-50,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 						elif event.key == pygame.K_DOWN:
-							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-25,25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,0,50,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 						elif event.key == pygame.K_LEFT:
-							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-25,-25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-50,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 						elif event.key == pygame.K_RIGHT:
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,50,0,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+						
+						if event.key == pygame.K_w:
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,25,-25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+						elif event.key == pygame.K_a:
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-25,25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+						elif event.key == pygame.K_q:
+							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-25,-25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+						elif event.key == pygame.K_s:
 							posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,25,25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
 						
 						elif event.key == pygame.K_p: ## DEBUG
@@ -346,6 +355,7 @@ while hacer:
 							reproducir_musica = False
 
 						if pygame.mixer.music.get_pos() >2900:
+							pass
 							blit_animacion = False
 
 						pygame.display.flip()
@@ -385,14 +395,32 @@ while hacer:
 						elif event.type == pygame.KEYDOWN: ##apretar boton
 							posx_pj,posy_pj = get_celdas_pos(celda_pj_pelea)
 							if event.key == pygame.K_UP:
-								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,25,-25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,0,-50,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
 							elif event.key == pygame.K_DOWN:
-								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-25,25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-0,50,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
 							elif event.key == pygame.K_LEFT:
-								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-25,-25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-50,-0,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
 							elif event.key == pygame.K_RIGHT:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,50,0,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+
+							if event.key == pygame.K_w:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,25,-25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+
+								#posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,25,-25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+							elif event.key == pygame.K_a:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-25,25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+
+								#posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-25,25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+							elif event.key == pygame.K_q:
+								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,-25,-25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
+
+								#posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,-25,-25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+							elif event.key == pygame.K_s:
 								celda_pj_pelea = mover_pj_en_pelea(pantalla,posx_pj,posy_pj,25,25,datos_personaje,datos_mapa,celda_mob_pelea,info_enemigo[1],datos_imagenes)
-							
+
+
+								#posicionX,posicionY,datos_personaje,datos_mapa,enemigos_bliteados,colision_pj_mob,info_enemigo = mover_personaje(pantalla,posicionX,posicionY,25,25,datos_mapa,datos_personaje,enemigos_bliteados,datos_imagenes)
+
 							elif event.key == pygame.K_p: ## DEBUG
 								#blit_cargando(pantalla)
 								#time.sleep(4)
@@ -403,6 +431,8 @@ while hacer:
 							#if event.key == pygame.K_a: letra a teclado
 							#if event.key == pygame.K_w: letra w teclado
 							#if event.key == pygame.K_s: letra s teclado
+					if not pelea:
+						print 'salir'
 					pygame.display.flip()
 
 				pygame.display.flip()

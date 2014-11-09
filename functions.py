@@ -766,11 +766,12 @@ def crear_personaje(pantalla,user,class_selected,menus):
 def get_datos_mapa(datos_personaje):
 	datos_mapa = dict()
 	try:
-		file_datos_mapa = open('media\mapas\mapa'+datos_personaje[5]+'.dat')
+		file_datos_mapa = open('media/mapas/mapa'+datos_personaje[5]+'.dat')
 		for linea in file_datos_mapa:
 			datos_mapa[linea.strip().split(' = ')[0]] = linea.strip().split(' = ')[1]
 		file_datos_mapa.close()
 	except:
+		print 'Error cargando datos del mapa'
 		pass
 	return datos_mapa
 
@@ -1050,6 +1051,9 @@ def mover_personaje(pantalla,posx,posy,direX,direY,datos_mapa,datos_personaje,en
 
 	celda_number = get_celda_number(posx+direX,posy+direY)[0]
 	if celda_number in celdas_bloquedas:
+		if debug_mode:
+			print celdas_bloquedas
+			print celda_number
 		return posx,posy,datos_personaje,datos_mapa,enemigos_bliteados,False,None
 
 	if debug_mode:
@@ -1340,7 +1344,7 @@ def colision_jugador_monster(posx,posy,enemigos_bliteados):
 	return False,None
 
 def animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacion_number,datos_imagenes):
-	#animacion_number = 3
+	animacion_number = 3
 	if animacion_number == 1 or animacion_number == 2:
 		pantalla.blit(datos_imagenes[11],(0,0))
 		if animacion_number == 1:
@@ -1415,26 +1419,30 @@ def animacion_pantalla(pantalla,screenX,screenY,info_enemigo,datos_mapa,animacio
 
 	elif animacion_number == 3:
 		if aspect_ratio == '2':
-			valor = int(6*(120.0/FPS))
+			valor = int(7*(120.0/FPS))
 			if valor < 1:
 				valor = 1
-			if screenY <= 200 and screenX >= 300:
+			if screenY <= 200 and screenX >= 488: ##izquierda
 				screenX -= valor
-				pantalla.blit(datos_imagenes[11],(screenX+66,screenY-600))
-				
-			elif screenX >= 500: ##arriba
-				#print screenY
-				
+				pantalla.blit(datos_imagenes[11],(screenX-133,screenY-600))	
+			elif screenX >= 840 and screenY >= 200: ##arriba
 				screenY -= valor
-				pantalla.blit(datos_imagenes[11],(screenX+66,screenY-200))
-			elif screenY < 600: ##abajo
-				
+				pantalla.blit(datos_imagenes[11],(screenX-133,screenY-200))
+			elif screenY < 600 and screenX == 133: ##abajo
 				screenY += valor
-				pantalla.blit(datos_imagenes[11],(screenX-566,screenY-600))
-			elif screenY >= 600 and screenX < 500:##derecha
-				
+				pantalla.blit(datos_imagenes[11],(screenX-578,screenY-600))
+			elif screenY >= 600 and screenX < 840:##derecha
 				screenX += valor
-				pantalla.blit(datos_imagenes[11],(screenX-566,screenY-200))
+				pantalla.blit(datos_imagenes[11],(screenX-578,screenY-200))
+			elif screenX <= 488 and screenY <= 400:
+				screenY += valor
+				pantalla.blit(datos_imagenes[11],(screenX-133,screenY-600))
+				print 'screenX',screenX
+				print 'screenY',screenY
+				if screenX >=480 and screenY >= 410:
+					if aspect_ratio == '2':
+						return 133,0,False,0
+					return 0,0,False,0
 
 		else:
 			valor = int(6*(120.0/FPS))
